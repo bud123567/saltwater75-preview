@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SW75 — Hours &amp; Address</title>
+<!-- WIX EMBED · HOURS + ADDRESS
+     Box size:  full width · 540 px tall (desktop) · 760 px (mobile editor)
+     (measured content: 521 px desktop / 741 px mobile)
+     ⚠ Hours and address inside an embed are invisible to Google's local
+       results. Keep your real hours/address in Wix's own business info too. -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Montserrat',Helvetica,Arial,sans-serif;background:#0e2a33;color:#f6efe4;line-height:1.65}
+a{text-decoration:none}
+
+.section{padding:clamp(2rem,5vw,3.5rem) 0}
+.wrap{width:min(1180px,92%);margin:0 auto}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.card{
+  background:rgba(255,255,255,.04);border:1px solid rgba(246,239,228,.14);
+  border-radius:14px;padding:clamp(1.25rem,3vw,2rem);
+}
+.eyebrow{
+  display:inline-block;font-weight:600;letter-spacing:.28em;text-transform:uppercase;
+  font-size:.7rem;color:#e8a04b;margin-bottom:.6rem;
+}
+h3{font-family:'Playfair Display',Georgia,serif;font-size:1.35rem;margin:0 0 .75rem}
+p{margin:0 0 .75rem;color:#cfe0dd;font-size:.94rem}
+.phone{color:#f2c078;font-weight:600;font-size:1.05rem}
+.phone:hover{color:#e8a04b}
+
+.hours{list-style:none;margin:0;padding:0}
+.hours li{
+  display:flex;justify-content:space-between;gap:1rem;
+  padding:.4rem 0;border-bottom:1px solid rgba(246,239,228,.10);
+  font-size:.9rem;color:#cfe0dd;
+}
+.hours li:last-child{border-bottom:0}
+.hours span:first-child{font-weight:600;color:#f6efe4}
+
+.btn{
+  display:inline-block;background:#e8a04b;color:#0b1f26;font-weight:600;
+  font-size:.82rem;letter-spacing:.04em;padding:.6rem 1.25rem;border-radius:999px;
+  margin-top:.5rem;transition:background .2s,transform .15s;
+}
+.btn:hover{background:#f2c078;transform:translateY(-2px)}
+
+@media (max-width:820px){ .grid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<section class="section">
+  <div class="wrap grid">
+
+    <div class="card">
+      <span class="eyebrow">Visit</span>
+      <h3>Address</h3>
+      <p>115 75th Street<br>Ocean City, MD 21842</p>
+      <p><a class="phone" href="tel:+14105247575">410-524-7575</a></p>
+      <a class="btn" href="https://www.google.com/maps/search/?api=1&amp;query=115+75th+Street+Ocean+City+MD+21842" target="_blank" rel="noopener">Get Directions</a>
+    </div>
+
+    <div class="card">
+      <span class="eyebrow">Open Daily</span>
+      <h3>Hours</h3>
+      <ul class="hours">
+        <li><span>Monday</span><span>11:00am &ndash; 12:00am</span></li>
+        <li><span>Tuesday</span><span>11:00am &ndash; 12:00am</span></li>
+        <li><span>Wednesday</span><span>11:00am &ndash; 12:00am</span></li>
+        <li><span>Thursday</span><span>11:00am &ndash; 12:00am</span></li>
+        <li><span>Friday</span><span>11:00am &ndash; 12:00am</span></li>
+        <li><span>Saturday</span><span>11:00am &ndash; 12:00am</span></li>
+        <li><span>Sunday</span><span>11:00am &ndash; 12:00am</span></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+</body>
+</html>

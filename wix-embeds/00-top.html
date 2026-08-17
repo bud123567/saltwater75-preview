@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SW75 — Top (nav + hero)</title>
+<!-- ===========================================================================
+     WIX EMBED · TOP OF PAGE  (nav bar + hero background in one block)
+
+     Add (+) → Embed Code → Embed HTML → Code → paste this whole file.
+     Stretch to full width, then set the height:
+
+         Desktop:  700 px          Mobile editor:  700 px
+
+     If it still looks cramped in the Wix mobile editor, drag the element
+     taller — the layout centres itself in whatever height you give it.
+
+     Place this at the very top of the page, above everything else.
+
+     WHY THIS IS ONE EMBED AND NOT TWO
+     The nav sits on top of the hero photo, the way the design intends, and
+     because the box is tall the Store / Contact dropdowns finally have room
+     to open inside it — a short standalone nav box would clip them.
+
+     Use this INSTEAD of 01-hero.html. Don't place both.
+
+     Hide Wix's own header in the Editor, or you'll have two navs.
+     All links use target="_top" so they navigate the whole site.
+     =========================================================================== -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%}
+body{font-family:'Montserrat',Helvetica,Arial,sans-serif;background:#0b1f26;color:#f6efe4;overflow:hidden}
+a{text-decoration:none}
+img{display:block;max-width:100%}
+ul{list-style:none;margin:0;padding:0}
+
+.top{position:relative;height:100%;display:flex;flex-direction:column;overflow:hidden;isolation:isolate}
+
+/* ---------- background photo — runs full height, behind the nav too ------- */
+.top::before{
+  content:"";position:absolute;inset:-4%;z-index:0;
+  background:url('https://static.wixstatic.com/media/8b7d81_20399a78150d4aa5bd46b15175849306~mv2.jpg') center 58%/cover no-repeat;
+  transform:scale(1.02);
+  animation:drift 32s ease-in-out infinite alternate;
+}
+@keyframes drift{from{transform:scale(1.02)}to{transform:scale(1.11)}}
+
+/* No wash at all across the nav — the photo runs completely untouched up
+   there. The radial only shades behind the hero copy lower down, and the
+   bottom fade lets the section below join on without a hard edge. */
+.top::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(58% 42% at 50% 60%,rgba(6,18,22,.66),transparent 74%),
+    linear-gradient(180deg,rgba(6,18,22,0) 0%,rgba(6,18,22,0) 22%,
+                    rgba(6,18,22,.22) 58%,rgba(11,31,38,.84) 100%);
+}
+
+/* ---------- fully see-through nav bar ---------- */
+.bar{
+  position:relative;z-index:3;flex:none;
+  background:transparent;
+  /* no border — a hairline over the photo reads as an artifact */
+}
+
+/* ---------- contact strip ---------- */
+.strip{border-bottom:0}
+.strip-in{
+  width:min(1180px,94%);margin:0 auto;display:flex;align-items:center;
+  justify-content:flex-end;gap:1.6rem;padding:.45rem 0;
+}
+.strip a{
+  display:inline-flex;align-items:center;gap:.4rem;color:#cfe0dd;font-size:.76rem;
+  font-weight:500;white-space:nowrap;
+  /* Layered: tight shadow for edge definition, wide one for a soft halo.
+     This is all that keeps the links readable now the tint is gone. */
+  text-shadow:0 1px 3px rgba(6,18,22,.95),0 2px 12px rgba(6,18,22,.85),0 0 28px rgba(6,18,22,.55);
+}
+.strip a:hover{color:#f2c078}
+.strip svg{width:11px;height:11px;fill:currentColor;flex:none}
+.strip .addr{margin-right:auto}
+
+/* ---------- nav row ---------- */
+.navrow{
+  position:relative;
+  width:min(1180px,94%);margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;gap:1.25rem;padding:.85rem 0;
+}
+.brand img{height:56px;width:auto;filter:drop-shadow(0 2px 10px rgba(0,0,0,.55))}
+
+.menu{display:flex;align-items:center;gap:.2rem}
+.menu>li{position:relative}
+.menu>li>a{
+  display:inline-block;color:#f6efe4;font-size:.88rem;font-weight:500;letter-spacing:.02em;
+  padding:.5rem .7rem;border-radius:8px;white-space:nowrap;
+  /* Layered: tight shadow for edge definition, wide one for a soft halo.
+     This is all that keeps the links readable now the tint is gone. */
+  text-shadow:0 1px 3px rgba(6,18,22,.95),0 2px 12px rgba(6,18,22,.85),0 0 28px rgba(6,18,22,.55);
+}
+.menu>li>a:hover{color:#f2c078}
+.has>a::after{content:" \25BE";font-size:.7em;opacity:.85}
+
+.sub{
+  position:absolute;top:100%;left:0;min-width:225px;padding:.4rem;
+  background:rgba(9,26,32,.98);border:1px solid rgba(246,239,228,.16);
+  border-radius:12px;box-shadow:0 18px 45px rgba(0,0,0,.5);
+  opacity:0;visibility:hidden;transform:translateY(8px);
+  transition:opacity .2s,transform .2s,visibility .2s;
+}
+.has:hover>.sub,.has:focus-within>.sub{opacity:1;visibility:visible;transform:translateY(2px)}
+.sub a{display:block;padding:.5rem .75rem;font-size:.85rem;color:#f6efe4;border-radius:7px}
+.sub a:hover{background:rgba(232,160,75,.16);color:#f2c078}
+
+.reserve{
+  display:inline-flex;align-items:center;justify-content:center;gap:.45rem;
+  background:#e8a04b;color:#0b1f26;font-weight:600;font-size:.8rem;letter-spacing:.03em;
+  padding:.58rem 1.1rem;border-radius:999px;white-space:nowrap;flex:none;
+  transition:background .2s,transform .15s;
+}
+.reserve:hover{background:#f2c078;transform:translateY(-2px)}
+.reserve svg{width:1em;height:1em;fill:currentColor;flex:none}
+
+.burger{display:none;background:none;border:0;cursor:pointer;width:42px;height:38px;padding:7px}
+.burger span{display:block;height:2px;background:#f6efe4;border-radius:2px;margin:5px 0;transition:transform .25s,opacity .25s}
+.actions{display:flex;align-items:center;gap:.6rem;position:relative;z-index:5}
+
+/* ---------- hero copy (sits over the shared photo layer above) ---------- */
+.hero{
+  position:relative;z-index:2;flex:1;min-height:0;
+  display:grid;place-items:center;text-align:center;padding:1rem 1.25rem 3rem;
+}
+.hero-in{max-width:720px}
+.hero-logo{width:clamp(210px,34vw,320px);margin:0 auto .9rem;filter:drop-shadow(0 6px 24px rgba(0,0,0,.65))}
+.tagline{
+  font-family:'Playfair Display',Georgia,serif;font-style:italic;
+  font-size:clamp(1.4rem,3.4vw,2.1rem);color:#f2c078;margin:0 0 .6rem;letter-spacing:.03em;
+  text-shadow:0 2px 18px rgba(6,18,22,.85),0 1px 3px rgba(6,18,22,.6);
+}
+.sub-copy{
+  font-size:clamp(.95rem,1.9vw,1.15rem);color:#f6efe4;margin:0 auto 1.6rem;max-width:520px;
+  text-shadow:0 2px 14px rgba(6,18,22,.8),0 1px 3px rgba(6,18,22,.55);
+}
+.cta{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.45rem;
+  border:2px solid transparent;font-weight:600;font-size:.86rem;letter-spacing:.04em;
+  padding:.75rem 1.5rem;border-radius:999px;transition:background .2s,transform .15s,color .2s;
+}
+.btn svg{width:1em;height:1em;fill:currentColor}
+.solid{background:#e8a04b;color:#0b1f26}
+.solid:hover{background:#f2c078;transform:translateY(-2px)}
+.ghost{border-color:#f6efe4;color:#f6efe4}
+.ghost:hover{background:#f6efe4;color:#0b1f26;transform:translateY(-2px)}
+
+/* ---------- drawer (position:fixed inside an iframe = pinned to this box) ---------- */
+@media (max-width:1024px){
+  .burger{display:block}
+  .nav{
+    position:fixed;inset:0 0 0 auto;width:min(300px,80%);z-index:4;
+    background:rgba(9,26,32,.98);transform:translateX(100%);
+    transition:transform .3s ease;padding:5.5rem 1.1rem 2rem;overflow-y:auto;
+    box-shadow:0 18px 45px rgba(0,0,0,.5);
+  }
+  .open .nav{transform:translateX(0)}
+  .open .burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .open .burger span:nth-child(2){opacity:0}
+  .open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  .menu{flex-direction:column;align-items:stretch;gap:.05rem}
+  .menu>li>a{display:block;padding:.7rem .5rem;border-bottom:1px solid rgba(246,239,228,.14)}
+  .has>a::after{float:right}
+  .sub{
+    position:static;opacity:1;visibility:visible;transform:none;background:transparent;
+    border:0;box-shadow:none;padding:0 0 .3rem .7rem;max-height:0;overflow:hidden;
+    transition:max-height .3s ease;
+  }
+  .has.exp>.sub{max-height:520px}
+  .brand img{height:46px}
+}
+
+@media (max-width:900px){
+  .strip .addr{display:none}
+  .strip-in{justify-content:center}
+  .reserve{padding:.5rem .9rem;font-size:.76rem}
+}
+
+/* Phones: the vw terms in the clamps above collapse to almost nothing at this
+   width, so everything bottoms out at its minimum and reads small against a
+   full-height photo. Set real sizes here instead. */
+@media (max-width:768px){
+  .brand img{height:50px}
+  .hero{padding:1rem 1.1rem 2.5rem}
+  .hero-logo{width:min(74vw,310px);margin-bottom:1.1rem}
+  .tagline{font-size:1.9rem;margin-bottom:.7rem}
+  .sub-copy{font-size:1.06rem;line-height:1.55;max-width:34ch;margin-bottom:1.8rem}
+  .btn{font-size:.95rem;padding:.85rem 1.6rem}
+  .strip a{font-size:.82rem}
+}
+
+/* ---------- desktop call popover ---------- */
+.callpop{
+  position:fixed;z-index:9;display:none;align-items:center;gap:.65rem;
+  background:rgba(9,26,32,.98);color:#f6efe4;
+  border:1px solid rgba(246,239,228,.18);border-radius:999px;
+  padding:.45rem .45rem .45rem 1.1rem;box-shadow:0 18px 45px rgba(0,0,0,.55);
+  font-size:1rem;font-weight:600;white-space:nowrap;
+}
+.callpop.open{display:flex}
+.callpop button{
+  background:#e8a04b;color:#0b1f26;border:0;border-radius:999px;
+  padding:.4rem .9rem;font:inherit;font-size:.78rem;cursor:pointer;
+}
+.callpop button:hover{background:#f2c078}
+
+@media (max-width:520px){
+  .reserve{width:44px;height:44px;padding:0;border-radius:50%}
+  .reserve span{display:none}
+  .reserve svg{width:16px;height:16px}
+  .brand img{height:46px}
+  .hero-logo{width:min(78vw,290px)}
+  .tagline{font-size:1.72rem}
+  .sub-copy{font-size:1.02rem}
+  .cta{flex-direction:column;align-items:center;gap:.7rem}
+  .btn{width:100%;max-width:290px}
+}
+</style>
+</head>
+<body>
+<div class="top" id="top">
+
+ <header class="bar">
+  <div class="strip">
+    <div class="strip-in">
+      <a class="addr" href="https://www.google.com/maps/search/?api=1&amp;query=115+75th+Street+Ocean+City+MD+21842" target="_blank" rel="noopener">
+        <svg viewBox="0 0 384 512" aria-hidden="true"><path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></svg>
+        <span>115 75th Street, Ocean City, MD 21842</span>
+      </a>
+      <a href="tel:+14105247575">
+        <svg viewBox="0 0 512 512" aria-hidden="true"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64c0 247.4 200.6 448 448 448 18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></svg>
+        <span>410-524-7575</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="navrow">
+    <a class="brand" href="https://www.saltwater75.com/" target="_top" aria-label="Saltwater 75">
+      <img src="https://static.wixstatic.com/media/c57fb0_ff950f6488bf48a5b535d179ea75521a~mv2.png" alt="Saltwater 75">
+    </a>
+
+    <nav class="nav" id="nav" aria-label="Primary">
+      <ul class="menu">
+        <li><a href="https://www.saltwater75.com/" target="_top">Home</a></li>
+        <li><a href="https://www.saltwater75.com/happy-hour" target="_top">Happy Hour</a></li>
+        <li><a href="https://www.saltwater75.com/general-5" target="_top">Menu</a></li>
+        <li class="has"><a href="https://www.saltwater75.com/shop" target="_top">Store</a>
+          <ul class="sub">
+            <li><a href="https://www.saltwater75.com/teeshirts" target="_top">T-Shirts</a></li>
+            <li><a href="https://www.saltwater75.com/shop-5" target="_top">Long Sleeve + Sweatshirts</a></li>
+            <li><a href="https://www.saltwater75.com/hats" target="_top">Hats</a></li>
+            <li><a href="https://www.saltwater75.com/accessories" target="_top">Accessories</a></li>
+            <li><a href="https://www.saltwater75.com/giftcards" target="_top">Gift Cards + AO Game Card</a></li>
+            <li><a href="https://www.saltwater75.com/shop-2" target="_top">Full Catalog</a></li>
+          </ul>
+        </li>
+        <li><a href="https://www.saltwater75.com/entertainment-calendar" target="_top">Entertainment</a></li>
+        <li class="has"><a href="https://www.saltwater75.com/contact" target="_top">Contact</a>
+          <ul class="sub">
+            <li><a href="https://www.saltwater75.com/general-6" target="_top">Plan A Party!</a></li>
+            <li><a href="https://www.saltwater75.com/frequently-asked" target="_top">Frequently Asked</a></li>
+            <li><a href="https://forms.wix.com/r/7024068827293942238" target="_blank" rel="noopener">Employment</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="actions">
+      <a class="reserve" href="tel:+14105247575" aria-label="Make a reservation — call 410-524-7575">
+        <svg viewBox="0 0 512 512" aria-hidden="true"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64c0 247.4 200.6 448 448 448 18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></svg>
+        <span>Make a Reservation</span>
+      </a>
+      <button class="burger" type="button" aria-controls="nav" aria-expanded="false" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+ </header>
+
+  <div class="hero">
+    <div class="hero-in">
+      <img class="hero-logo" src="https://static.wixstatic.com/media/c57fb0_ff950f6488bf48a5b535d179ea75521a~mv2.png" alt="Saltwater 75">
+      <p class="tagline">bayfront dining</p>
+      <p class="sub-copy">Fresh seafood, cold drinks &amp; the best sunset view in Ocean City.</p>
+      <div class="cta">
+        <a class="btn solid" href="tel:+14105247575" aria-label="Make a reservation — call 410-524-7575">
+          <svg viewBox="0 0 512 512" aria-hidden="true"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64c0 247.4 200.6 448 448 448 18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></svg>
+          <span>Make a Reservation</span>
+        </a>
+        <a class="btn ghost" href="https://www.saltwater75.com/general-5" target="_top">View the Menu</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var top = document.getElementById('top'),
+      nav = document.getElementById('nav'),
+      burger = document.querySelector('.burger'),
+      mobile = window.matchMedia('(max-width: 1024px)');
+
+  function setOpen(open) {
+    top.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  burger.addEventListener('click', function () {
+    setOpen(!top.classList.contains('open'));
+  });
+
+  mobile.addEventListener('change', function (e) { if (!e.matches) setOpen(false); });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && top.classList.contains('open')) { setOpen(false); burger.focus(); }
+  });
+
+  // On mobile a parent link expands its submenu instead of navigating away.
+  nav.querySelectorAll('.has > a').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      if (mobile.matches) { e.preventDefault(); a.parentElement.classList.toggle('exp'); }
+    });
+  });
+
+  // Close the drawer on a real destination, but not when only opening a submenu.
+  nav.querySelectorAll('a').forEach(function (a) {
+    var isParent = a.parentElement.classList.contains('has');
+    a.addEventListener('click', function () {
+      if (isParent && mobile.matches) return;
+      setOpen(false);
+    });
+  });
+
+  /* ---- tel: links ---------------------------------------------------------
+     Phones open the dialer straight from the href, so they're left alone.
+     Desktops usually can't place a call, so show the number with a copy
+     button rather than firing a link that goes nowhere. */
+  if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
+
+  var PHONE = '410-524-7575';
+  var pop = document.createElement('div');
+  pop.className = 'callpop';
+  pop.setAttribute('role', 'dialog');
+  pop.setAttribute('aria-label', 'Call ' + PHONE);
+  pop.innerHTML = '<span>' + PHONE + '</span><button type="button">Copy</button>';
+  document.body.appendChild(pop);
+
+  var copyBtn = pop.querySelector('button');
+  function hidePop() { pop.classList.remove('open'); }
+
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest ? e.target : e.target.parentElement;
+    var link = el && el.closest ? el.closest('a[href^="tel:"]') : null;
+    if (link) {
+      e.preventDefault();
+      var r = link.getBoundingClientRect();
+      pop.classList.add('open');
+      var pw = pop.offsetWidth;
+      pop.style.top  = (r.bottom + 10) + 'px';
+      pop.style.left = Math.max(10, Math.min(r.left + r.width / 2 - pw / 2,
+                                             window.innerWidth - pw - 10)) + 'px';
+      copyBtn.textContent = 'Copy';
+      return;
+    }
+    if (!pop.contains(e.target)) hidePop();
+  });
+
+  copyBtn.addEventListener('click', function () {
+    var done = function (m) {
+      copyBtn.textContent = m;
+      setTimeout(function () { copyBtn.textContent = 'Copy'; }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(PHONE).then(function () { done('Copied'); })
+                                          .catch(function () { done('Select it'); });
+    } else { done('Select it'); }
+  });
+
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hidePop(); });
+})();
+</script>
+</body>
+</html>

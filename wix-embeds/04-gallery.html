@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SW75 — Gallery</title>
+<!-- WIX EMBED · GALLERY
+     Box size:  full width · 840 px tall (desktop) · 850 px (mobile editor)
+     (measured content: 816 px desktop / 827 px mobile)
+     Images are hot-linked from the Wix CDN, same as your live site. -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Montserrat',Helvetica,Arial,sans-serif;background:#0b1f26;color:#f6efe4}
+img{display:block;width:100%;height:100%;object-fit:cover}
+
+.section{padding:clamp(2rem,5vw,3.5rem) 0}
+.wrap{width:min(1180px,92%);margin:0 auto}
+.head{text-align:center;max-width:640px;margin:0 auto clamp(1.5rem,3vw,2.25rem)}
+.eyebrow{
+  display:inline-block;font-weight:600;letter-spacing:.28em;text-transform:uppercase;
+  font-size:.72rem;color:#e8a04b;margin-bottom:.6rem;
+}
+h2{
+  font-family:'Playfair Display',Georgia,serif;font-weight:700;line-height:1.15;
+  font-size:clamp(1.6rem,3.4vw,2.5rem);margin:0;
+}
+.grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  grid-auto-rows:190px;gap:.75rem;
+}
+figure{margin:0;overflow:hidden;border-radius:12px;background:#0e2a33}
+figure img{transition:transform .4s ease}
+figure:hover img{transform:scale(1.05)}
+/* two feature tiles so the grid isn't a flat waffle */
+figure:nth-child(1){grid-column:span 2;grid-row:span 2}
+figure:nth-child(6){grid-column:span 2}
+
+@media (max-width:900px){
+  .grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:170px}
+  figure:nth-child(1){grid-column:span 2;grid-row:span 1}
+  figure:nth-child(6){grid-column:span 1}
+}
+@media (max-width:520px){
+  .grid{grid-auto-rows:130px;gap:.5rem}
+}
+</style>
+</head>
+<body>
+<section class="section">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">The Scene</span>
+      <h2>Bay views, good times</h2>
+    </div>
+    <div class="grid">
+      <figure><img src="https://static.wixstatic.com/media/8b7d81_fac878ca6621489296d01c593d187e87~mv2.jpg" alt="Saltwater 75 photo 1" loading="lazy"></figure>
+      <figure><img src="https://static.wixstatic.com/media/8b7d81_fac94caea9154a1a8c82412cd26aa030~mv2.jpg" alt="Saltwater 75 photo 2" loading="lazy"></figure>
+      <figure><img src="https://static.wixstatic.com/media/8b7d81_9e0c692749f1458fac87316b08175b36~mv2.jpg" alt="Saltwater 75 photo 3" loading="lazy"></figure>
+      <figure><img src="https://static.wixstatic.com/media/8b7d81_4578ab8a85194bbf8a068a0aa2a69166~mv2.jpg" alt="Saltwater 75 photo 4" loading="lazy"></figure>
+      <figure><img src="https://static.wixstatic.com/media/8b7d81_f1665d67599d4baba7a5aa082cd31c27~mv2.jpg" alt="Saltwater 75 photo 5" loading="lazy"></figure>
+      <figure><img src="https://static.wixstatic.com/media/8b7d81_6236fb9170a1446585495d1908d55e1e~mv2.jpg" alt="Saltwater 75 photo 6" loading="lazy"></figure>
+      <figure><img src="https://static.wixstatic.com/media/8b7d81_d75404662ebc4e53810e158d04ebcdf7~mv2.jpg" alt="Saltwater 75 photo 7" loading="lazy"></figure>
+      <figure><img src="https://static.wixstatic.com/media/8b7d81_922685b962d5451d91b0b89b36ba2106~mv2.jpg" alt="Saltwater 75 photo 8" loading="lazy"></figure>
+    </div>
+  </div>
+</section>
+</body>
+</html>

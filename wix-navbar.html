@@ -1,0 +1,456 @@
+<!--
+  ============================================================================
+  SALTWATER 75 — CUSTOM NAV BAR FOR WIX
+  ============================================================================
+
+  HOW TO INSTALL
+  1. Wix dashboard → Settings → Custom Code  →  "+ Add Custom Code"
+  2. Paste EVERYTHING in this file (from <style> down to </script>)
+  3. Add Code to Pages:  All pages
+  4. Place Code in:      Body - start
+  5. Name it "Saltwater 75 Nav", click Apply, then PUBLISH.
+
+  ⚠  The Wix EDITOR and PREVIEW will not show this. Custom Code only runs on
+     the published site. Check the live site, not the editor.
+
+  ⚠  Wix deletes custom code snippets if you change your domain. If you ever
+     move the domain, re-add this afterwards.
+
+  EDIT ANYTHING below in the CONFIG block — phone, address, links, colours.
+  You should not need to touch the CSS or the code under CONFIG.
+  ============================================================================
+-->
+
+<style>
+/* All selectors are namespaced sw75- so nothing here can collide with Wix. */
+
+.sw75-bar, .sw75-bar * { box-sizing: border-box; }
+
+.sw75-bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 2147483000;              /* above Wix's own stacking */
+  font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+  /* Fully clear at rest — no tint at all, so the hero photo reads untouched. */
+  background: transparent;
+  transition: background .3s ease, box-shadow .3s ease;
+}
+/* With no wash behind them, the links rely entirely on these. Layered so the
+   tight shadow gives edge definition and the wide one throws a soft halo,
+   which is what keeps white text readable over a bright sky. */
+.sw75-bar:not(.sw75-scrolled) .sw75-menu a,
+.sw75-bar:not(.sw75-scrolled) .sw75-uitem {
+  text-shadow: 0 1px 3px rgba(6,18,22,.95),
+               0 2px 12px rgba(6,18,22,.85),
+               0 0 28px rgba(6,18,22,.55);
+}
+.sw75-bar:not(.sw75-scrolled) .sw75-logo img {
+  filter: drop-shadow(0 2px 16px rgba(0,0,0,.75));
+}
+/* The divider under the contact strip reads as a stray hairline once the tint
+   is gone, so it only appears when the bar has a background to sit on. */
+.sw75-bar:not(.sw75-scrolled) .sw75-utility { border-bottom-color: transparent; }
+.sw75-bar.sw75-scrolled {
+  background: rgba(9,26,32,.97);
+  box-shadow: 0 8px 30px rgba(0,0,0,.35);
+  /* NOTE: deliberately no backdrop-filter — it would become the containing
+     block for the fixed mobile drawer and collapse it into the bar. */
+}
+
+/* ---------- contact strip ---------- */
+.sw75-utility {
+  background: transparent;          /* see-through, same as the bar */
+  border-bottom: 1px solid rgba(246,239,228,.20);
+  overflow: hidden; max-height: 44px;
+  transition: max-height .3s ease, opacity .25s ease, border-color .3s ease;
+}
+.sw75-bar.sw75-scrolled .sw75-utility {
+  max-height: 0; opacity: 0; border-bottom-color: transparent;
+}
+.sw75-utility-inner {
+  width: min(1180px, 94vw); margin: 0 auto;
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 1.75rem; padding: .5rem 0;
+}
+.sw75-uitem {
+  display: inline-flex; align-items: center; gap: .45rem;
+  color: #cfe0dd; font-size: .8rem; font-weight: 500;
+  text-decoration: none; white-space: nowrap;
+}
+.sw75-uitem:hover { color: #f2c078; }
+.sw75-uitem svg { width: 12px; height: 12px; fill: currentColor; flex: none; }
+.sw75-uaddr { margin-right: auto; }
+
+/* ---------- main row ---------- */
+.sw75-inner {
+  width: min(1180px, 94vw); margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1.5rem; padding: .9rem 0; transition: padding .3s ease;
+}
+.sw75-bar.sw75-scrolled .sw75-inner { padding: .5rem 0; }
+
+.sw75-logo { display: block; flex: none; }
+.sw75-logo img {
+  height: 62px; width: auto; display: block; transition: height .3s ease;
+  filter: drop-shadow(0 2px 10px rgba(0,0,0,.5));
+}
+.sw75-bar.sw75-scrolled .sw75-logo img { height: 46px; }
+
+/* ---------- menu ---------- */
+.sw75-nav ul { list-style: none; margin: 0; padding: 0; }
+.sw75-menu { display: flex; align-items: center; gap: .35rem; }
+.sw75-menu > li { position: relative; }
+.sw75-menu a {
+  color: #f6efe4; font-weight: 500; font-size: .92rem; letter-spacing: .03em;
+  padding: .55rem .8rem; border-radius: 8px; text-decoration: none;
+  display: inline-block; white-space: nowrap;
+}
+.sw75-menu > li > a:hover { color: #f2c078; }
+.sw75-has-children > a::after { content: " \25BE"; font-size: .7em; opacity: .8; }
+
+.sw75-sub {
+  position: absolute; min-width: 230px; padding: .4rem;
+  background: rgba(9,26,32,.98); border: 1px solid rgba(246,239,228,.14);
+  border-radius: 12px; box-shadow: 0 18px 45px rgba(0,0,0,.45);
+  opacity: 0; visibility: hidden; transform: translateY(8px);
+  transition: opacity .2s ease, transform .2s ease, visibility .2s;
+}
+.sw75-has-children:hover > .sw75-sub,
+.sw75-has-children:focus-within > .sw75-sub {
+  opacity: 1; visibility: visible; transform: translateY(2px);
+}
+.sw75-sub a { display: block; padding: .55rem .8rem; font-size: .88rem; }
+.sw75-sub a:hover { background: rgba(232,160,75,.14); color: #f2c078; }
+
+/* ---------- reservation CTA ---------- */
+.sw75-actions { display: flex; align-items: center; gap: .65rem; position: relative; z-index: 30; }
+.sw75-reserve {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  background: #e8a04b; color: #0b1f26; border: 2px solid transparent;
+  font-weight: 600; font-size: .82rem; letter-spacing: .04em;
+  padding: .6rem 1.15rem; border-radius: 999px; text-decoration: none;
+  white-space: nowrap; transition: background .2s ease, transform .15s ease;
+}
+.sw75-reserve:hover { background: #f2c078; color: #0b1f26; transform: translateY(-2px); }
+.sw75-reserve svg { width: 1em; height: 1em; fill: currentColor; flex: none; }
+
+/* ---------- burger ---------- */
+.sw75-toggle {
+  display: none; background: none; border: 0; cursor: pointer;
+  width: 44px; height: 40px; padding: 8px;
+}
+.sw75-toggle span {
+  display: block; height: 2px; width: 100%; background: #f6efe4;
+  margin: 5px 0; border-radius: 2px; transition: transform .25s ease, opacity .25s ease;
+}
+.sw75-open .sw75-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.sw75-open .sw75-toggle span:nth-child(2) { opacity: 0; }
+.sw75-open .sw75-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ---------- drawer (nav collapses early: 8 items + CTA stop fitting) ---------- */
+@media (max-width: 1024px) {
+  .sw75-toggle { display: block; }
+  .sw75-nav {
+    position: fixed; inset: 0 0 0 auto; width: min(320px, 82vw);
+    background: rgba(9,26,32,.98);
+    transform: translateX(100%); transition: transform .3s ease;
+    padding: 7.5rem 1.25rem 2rem; overflow-y: auto;
+    box-shadow: 0 18px 45px rgba(0,0,0,.45);
+  }
+  .sw75-open .sw75-nav { transform: translateX(0); }
+  .sw75-menu { flex-direction: column; align-items: stretch; gap: .1rem; }
+  .sw75-menu > li > a {
+    display: block; padding: .8rem .6rem;
+    border-bottom: 1px solid rgba(246,239,228,.14);
+  }
+  .sw75-has-children > a::after { float: right; }
+  .sw75-sub {
+    position: static; opacity: 1; visibility: visible; transform: none;
+    box-shadow: none; border: 0; background: transparent;
+    padding: 0 0 .4rem .8rem; max-height: 0; overflow: hidden;
+    transition: max-height .3s ease;
+  }
+  .sw75-has-children.sw75-expanded > .sw75-sub { max-height: 600px; }
+  body.sw75-locked { overflow: hidden; }
+}
+
+@media (max-width: 900px) {
+  .sw75-uaddr { display: none; }
+  .sw75-utility-inner { justify-content: center; gap: 1rem; }
+  .sw75-reserve { padding: .5rem .95rem; font-size: .78rem; }
+}
+
+/* ---------- desktop call popover ----------
+   Shown instead of firing a tel: link on machines that can't place calls. */
+.sw75-callpop {
+  position: fixed; z-index: 2147483001; display: none;
+  align-items: center; gap: .65rem;
+  background: rgba(9,26,32,.98); color: #f6efe4;
+  border: 1px solid rgba(246,239,228,.18); border-radius: 999px;
+  padding: .45rem .45rem .45rem 1.1rem;
+  box-shadow: 0 18px 45px rgba(0,0,0,.55);
+  font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 1rem; font-weight: 600; letter-spacing: .02em; white-space: nowrap;
+}
+.sw75-callpop.sw75-pop-open { display: flex; }
+.sw75-callpop button {
+  background: #e8a04b; color: #0b1f26; border: 0; border-radius: 999px;
+  padding: .4rem .9rem; font: inherit; font-size: .78rem; cursor: pointer;
+  transition: background .2s ease;
+}
+.sw75-callpop button:hover { background: #f2c078; }
+
+@media (max-width: 520px) {
+  /* No room for logo + label + burger: collapse the CTA to a dial button. */
+  .sw75-reserve { width: 42px; height: 42px; padding: 0; border-radius: 50%; }
+  .sw75-reserve-label { display: none; }
+  .sw75-logo img { height: 48px; }
+  .sw75-bar.sw75-scrolled .sw75-logo img { height: 40px; }
+}
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =========================================================================
+     CONFIG — edit this block only
+     ========================================================================= */
+  var CFG = {
+    phone:        '+14105247575',
+    phoneDisplay: '410-524-7575',
+    address:      '115 75th Street, Ocean City, MD 21842',
+    mapUrl:       'https://www.google.com/maps/search/?api=1&query=115+75th+Street+Ocean+City+MD+21842',
+    logo:         'https://static.wixstatic.com/media/c57fb0_ff950f6488bf48a5b535d179ea75521a~mv2.png',
+
+    // Set false to keep Wix's own header visible (you'll then have two navs).
+    hideWixHeader: true,
+
+    // Pushes the page down so the fixed bar never covers the top of a page.
+    // Set FALSE if every page starts with a full-bleed hero (e.g. the
+    // 01-hero.html embed) and you want the bar floating over the photo
+    // instead of sitting above it. With false, any page that does NOT start
+    // with a hero will have its first ~120px hidden under the bar.
+    offsetContent: true,
+
+    menu: [
+      { label: 'Home',          url: '/' },
+      { label: 'Happy Hour',    url: '/happy-hour' },
+      { label: 'Menu',          url: '/general-5' },
+      { label: 'Store',         url: '/shop', children: [
+          { label: 'T-Shirts',                  url: '/teeshirts' },
+          { label: 'Long Sleeve + Sweatshirts', url: '/shop-5' },
+          { label: 'Hats',                      url: '/hats' },
+          { label: 'Accessories',               url: '/accessories' },
+          { label: 'Gift Cards + AO Game Card', url: '/giftcards' },
+          { label: 'Full Catalog',              url: '/shop-2' }
+      ]},
+      { label: 'Entertainment', url: '/entertainment-calendar' },
+      { label: 'Contact',       url: '/contact', children: [
+          { label: 'Plan A Party!',    url: '/general-6' },
+          { label: 'Frequently Asked', url: '/frequently-asked' },
+          { label: 'Employment',       url: 'https://forms.wix.com/r/7024068827293942238' }
+      ]}
+    ]
+  };
+  /* ===================== end CONFIG — no edits needed below ================ */
+
+  if (document.getElementById('sw75-bar')) return;   // never inject twice
+
+  var ICON_PIN   = '<svg viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></svg>';
+  var ICON_PHONE = '<svg viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64c0 247.4 200.6 448 448 448 18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></svg>';
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+
+  // External links open in a new tab; internal ones navigate normally.
+  function attrs(url) {
+    return /^https?:\/\//i.test(url) ? ' target="_blank" rel="noopener"' : '';
+  }
+
+  function buildMenu(items) {
+    return items.map(function (it) {
+      var kids = it.children && it.children.length;
+      var html = '<li class="' + (kids ? 'sw75-has-children' : '') + '">' +
+                 '<a href="' + esc(it.url) + '"' + attrs(it.url) + '>' + esc(it.label) + '</a>';
+      if (kids) {
+        html += '<ul class="sw75-sub">' + it.children.map(function (c) {
+          return '<li><a href="' + esc(c.url) + '"' + attrs(c.url) + '>' + esc(c.label) + '</a></li>';
+        }).join('') + '</ul>';
+      }
+      return html + '</li>';
+    }).join('');
+  }
+
+  var bar = document.createElement('header');
+  bar.id = 'sw75-bar';
+  bar.className = 'sw75-bar';
+  bar.setAttribute('role', 'banner');
+  bar.innerHTML =
+    '<div class="sw75-utility"><div class="sw75-utility-inner">' +
+      '<a class="sw75-uitem sw75-uaddr" href="' + esc(CFG.mapUrl) + '" target="_blank" rel="noopener">' +
+        ICON_PIN + '<span>' + esc(CFG.address) + '</span></a>' +
+      '<a class="sw75-uitem" href="tel:' + esc(CFG.phone) + '">' +
+        ICON_PHONE + '<span>' + esc(CFG.phoneDisplay) + '</span></a>' +
+    '</div></div>' +
+    '<div class="sw75-inner">' +
+      '<a class="sw75-logo" href="/" aria-label="Saltwater 75">' +
+        '<img src="' + esc(CFG.logo) + '" alt="Saltwater 75">' +
+      '</a>' +
+      '<nav class="sw75-nav" id="sw75-nav" aria-label="Primary">' +
+        '<ul class="sw75-menu">' + buildMenu(CFG.menu) + '</ul>' +
+      '</nav>' +
+      '<div class="sw75-actions">' +
+        '<a class="sw75-reserve" href="tel:' + esc(CFG.phone) + '" ' +
+           'aria-label="Make a reservation — call ' + esc(CFG.phoneDisplay) + '">' +
+          ICON_PHONE + '<span class="sw75-reserve-label">Make a Reservation</span></a>' +
+        '<button class="sw75-toggle" type="button" aria-controls="sw75-nav" aria-expanded="false">' +
+          '<span></span><span></span><span></span>' +
+        '</button>' +
+      '</div>' +
+    '</div>';
+
+  function init() {
+    document.body.insertBefore(bar, document.body.firstChild);
+
+    // Hide Wix's own chrome. #SITE_HEADER holds the desktop header and the
+    // mobile menu (MENU_AS_CONTAINER lives inside it). QUICK_ACTION_BAR is
+    // Wix's separate mobile call/email bar and sits OUTSIDE the header, so it
+    // survives unless named explicitly.
+    if (CFG.hideWixHeader) {
+      var s = document.createElement('style');
+      s.textContent = '#SITE_HEADER, #SITE_HEADER_WRAPPER, #QUICK_ACTION_BAR' +
+                      ' { display: none !important; }';
+      document.head.appendChild(s);
+    }
+
+    // Push the page down by however tall the bar currently is, so the fixed
+    // bar never covers the top of a page. Skipped when offsetContent is false,
+    // which lets the bar float over a full-bleed hero.
+    function reflow() {
+      if (!CFG.offsetContent) return;
+      var target = document.getElementById('SITE_CONTAINER') || document.body;
+      target.style.paddingTop = bar.offsetHeight + 'px';
+    }
+
+    var mobile = window.matchMedia('(max-width: 1024px)');
+    var toggle = bar.querySelector('.sw75-toggle');
+    var nav    = bar.querySelector('.sw75-nav');
+
+    function setOpen(open) {
+      bar.classList.toggle('sw75-open', open);
+      document.body.classList.toggle('sw75-locked', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    function onScroll() {
+      bar.classList.toggle('sw75-scrolled', window.scrollY > 40);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', reflow);
+    onScroll();
+    reflow();
+    // Wix lays out asynchronously, so re-measure once things settle.
+    setTimeout(reflow, 600);
+    setTimeout(reflow, 2000);
+
+    toggle.addEventListener('click', function () {
+      setOpen(!bar.classList.contains('sw75-open'));
+    });
+
+    mobile.addEventListener('change', function (e) {
+      if (!e.matches) setOpen(false);          // don't strand the drawer open
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && bar.classList.contains('sw75-open')) {
+        setOpen(false); toggle.focus();
+      }
+    });
+
+    // On mobile a parent link expands its submenu instead of navigating.
+    nav.querySelectorAll('.sw75-has-children > a').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        if (mobile.matches) {
+          e.preventDefault();
+          link.parentElement.classList.toggle('sw75-expanded');
+        }
+      });
+    });
+
+    // Close the drawer when an actual destination is chosen — but not when the
+    // tap was only opening a submenu.
+    nav.querySelectorAll('a').forEach(function (link) {
+      var isParent = link.parentElement.classList.contains('sw75-has-children');
+      link.addEventListener('click', function () {
+        if (isParent && mobile.matches) return;
+        setOpen(false);
+      });
+    });
+
+    /* ---- tel: links ------------------------------------------------------
+       Phones open the dialer straight from the href, which is what we want, so
+       they are left alone. Desktops usually cannot place a call — the link
+       either does nothing or hands off to some app the visitor never chose —
+       so there we show the number with a copy button instead. */
+    var canDial = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    if (canDial) return;
+
+    var pop = document.createElement('div');
+    pop.className = 'sw75-callpop';
+    pop.setAttribute('role', 'dialog');
+    pop.setAttribute('aria-label', 'Call ' + CFG.phoneDisplay);
+    pop.innerHTML = '<span>' + esc(CFG.phoneDisplay) + '</span>' +
+                    '<button type="button">Copy</button>';
+    document.body.appendChild(pop);
+
+    var copyBtn = pop.querySelector('button');
+    function hidePop() { pop.classList.remove('sw75-pop-open'); }
+
+    document.addEventListener('click', function (e) {
+      var el   = e.target.closest ? e.target : e.target.parentElement;
+      var link = el && el.closest ? el.closest('a[href^="tel:"]') : null;
+
+      if (link && bar.contains(link)) {
+        e.preventDefault();
+        var r = link.getBoundingClientRect();
+        // keep it on screen when the trigger sits near an edge
+        pop.classList.add('sw75-pop-open');
+        var pw = pop.offsetWidth;
+        pop.style.top  = (r.bottom + 10) + 'px';
+        pop.style.left = Math.max(12, Math.min(r.left + r.width / 2 - pw / 2,
+                                               window.innerWidth - pw - 12)) + 'px';
+        copyBtn.textContent = 'Copy';
+        return;
+      }
+      if (!pop.contains(e.target)) hidePop();
+    });
+
+    copyBtn.addEventListener('click', function () {
+      var done = function (msg) {
+        copyBtn.textContent = msg;
+        setTimeout(function () { copyBtn.textContent = 'Copy'; }, 1600);
+      };
+      // navigator.clipboard needs a secure context; Wix is HTTPS, but fall back
+      // to selecting the number so it can still be copied by hand.
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(CFG.phoneDisplay)
+          .then(function () { done('Copied'); })
+          .catch(function () { done('Select it'); });
+      } else {
+        done('Select it');
+      }
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') hidePop();
+    });
+    window.addEventListener('scroll', hidePop, { passive: true });
+  }
+
+  if (document.body) init();
+  else document.addEventListener('DOMContentLoaded', init);
+})();
+</script>

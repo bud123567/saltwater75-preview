@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1f26">
+<title>Entertainment | Saltwater 75</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- Tokens ---------- */
+:root {
+	--ink:        #0b1f26;   /* deep ocean */
+	--ink-2:      #0e2a33;
+	--panel:      #113640;
+	--teal:       #2f7d84;
+	--sand:       #f6efe4;   /* cream text */
+	--sand-dim:   #cfe0dd;
+	--gold:       #e8a04b;   /* sunset */
+	--gold-2:     #f2c078;
+	--coral:      #e06b4f;
+	--line:       rgba(246,239,228,.14);
+	--maxw:       1180px;
+	--radius:     14px;
+	--shadow:     0 18px 45px rgba(0,0,0,.35);
+	--head:       'Playfair Display', Georgia, serif;
+	--body:       'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ---------- Reset-ish ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+/* scroll-padding clears the sticky header; anchor jumps always land in its
+   scrolled (contact strip collapsed) state, so budget for that height. */
+html { scroll-behavior: smooth; scroll-padding-top: 6.25rem; }
+body {
+	margin: 0;
+	font-family: var(--body);
+	color: var(--sand);
+	background: var(--ink);
+	line-height: 1.65;
+	-webkit-font-smoothing: antialiased;
+}
+/* Belt-and-braces against a sideways scroll on iOS. Safe here because the
+   sticky header is position:fixed, not sticky, so nothing depends on the
+   document being the scroll container horizontally. */
+html, body { overflow-x: hidden; max-width: 100%; }
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--gold-2); text-decoration: none; transition: color .2s ease; }
+a:hover { color: var(--gold); }
+h1, h2, h3, h4 { font-family: var(--head); font-weight: 700; line-height: 1.15; margin: 0 0 .5em; }
+h2 { font-size: clamp(1.9rem, 4vw, 3rem); }
+h3 { font-size: 1.5rem; }
+p { margin: 0 0 1rem; }
+
+.wrap { width: min(var(--maxw), 92vw); margin-inline: auto; }
+.section { padding: clamp(3.5rem, 8vw, 7rem) 0; }
+.eyebrow {
+	display: inline-block;
+	font-family: var(--body);
+	font-weight: 600;
+	letter-spacing: .28em;
+	text-transform: uppercase;
+	font-size: .72rem;
+	color: var(--gold);
+	margin-bottom: 1rem;
+}
+.section__head { text-align: center; max-width: 40rem; margin: 0 auto clamp(2rem, 4vw, 3rem); }
+
+.screen-reader-text {
+	position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+	overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.skip-link { position: absolute; left: -999px; top: 0; z-index: 1000; }
+.skip-link:focus {
+	left: 12px; top: 12px; background: var(--gold); color: var(--ink);
+	padding: .6rem 1rem; border-radius: 8px; font-weight: 600;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+	display: inline-block; cursor: pointer; border: 2px solid transparent;
+	font-family: var(--body); font-weight: 600; letter-spacing: .04em;
+	font-size: .9rem; padding: .85rem 1.7rem; border-radius: 999px;
+	transition: transform .15s ease, background .2s ease, color .2s ease, border-color .2s ease;
+}
+.btn--sm { padding: .6rem 1.25rem; font-size: .82rem; }
+.btn--solid { background: var(--gold); color: var(--ink); }
+.btn--solid:hover { background: var(--gold-2); color: var(--ink); transform: translateY(-2px); }
+.btn--ghost { border-color: var(--sand); color: var(--sand); background: transparent; }
+.btn--ghost:hover { background: var(--sand); color: var(--ink); transform: translateY(-2px); }
+
+/* ---------- Call popover ---------- */
+/* Last-resort fallback only. Every tel: click navigates for real and opens the
+   phone app; this appears afterwards, and solely on a desktop that turned out
+   to have no handler registered, where the click would otherwise do nothing.
+   See the tel: block in the script for how that is detected. */
+.callpop {
+	position: fixed; z-index: 1200; display: none;
+	align-items: center; gap: .6rem;
+	padding: .5rem .5rem .5rem .95rem;
+	background: rgba(9,26,32,.98); border: 1px solid var(--line);
+	border-radius: 999px; box-shadow: var(--shadow);
+	font-family: var(--body); font-size: .9rem; color: var(--sand-dim);
+	white-space: nowrap;
+}
+.callpop.is-open { display: inline-flex; }
+.callpop strong {
+	font-family: var(--head); font-weight: 600; font-size: 1.05rem;
+	color: var(--gold-2); letter-spacing: .01em;
+}
+.callpop button {
+	border: 0; cursor: pointer; border-radius: 999px;
+	background: var(--gold); color: var(--ink);
+	font-family: var(--body); font-weight: 600; font-size: .76rem;
+	letter-spacing: .04em; padding: .42rem .9rem;
+	transition: background .2s ease;
+}
+.callpop button:hover { background: var(--gold-2); }
+.callpop button:focus-visible { outline: 2px solid var(--sand); outline-offset: 2px; }
+
+/* ---------- Sticky header ---------- */
+.site-header {
+	position: fixed; inset: 0 0 auto 0; z-index: 100;
+	/* Fully clear at rest so the hero photo reads untouched. */
+	background: transparent;
+	transition: background .3s ease, box-shadow .3s ease, padding .3s ease;
+}
+/* With no wash behind them the links rely entirely on these. Layered: the
+   tight shadow gives edge definition, the wide one throws a soft halo. */
+.site-header:not(.is-scrolled) .main-navigation a,
+.site-header:not(.is-scrolled) .utility__item {
+	text-shadow: 0 1px 3px rgba(6,18,22,.95),
+	             0 2px 12px rgba(6,18,22,.85),
+	             0 0 28px rgba(6,18,22,.55);
+}
+.site-header:not(.is-scrolled) .site-logo img {
+	filter: drop-shadow(0 2px 16px rgba(0,0,0,.75));
+}
+/* A hairline over the photo reads as a stray artifact, so the strip's divider
+   only appears once the bar has a background to sit on. */
+.site-header:not(.is-scrolled) .site-header__utility { border-bottom-color: transparent; }
+.site-header.is-scrolled {
+	background: rgba(9,26,32,.96);
+	box-shadow: 0 8px 30px rgba(0,0,0,.35);
+	/* Safe on desktop only — see the reset in the 900px breakpoint. */
+	backdrop-filter: blur(8px);
+}
+.site-header__inner {
+	width: min(var(--maxw), 94vw); margin-inline: auto;
+	display: flex; align-items: center; justify-content: space-between;
+	gap: 1.5rem; padding: .9rem 0; transition: padding .3s ease;
+}
+.site-header.is-scrolled .site-header__inner { padding: .5rem 0; }
+
+/* ---------- Contact strip ---------- */
+.site-header__utility {
+	background: transparent;          /* see-through, same as the bar */
+	border-bottom: 1px solid var(--line);
+	overflow: hidden; max-height: 2.75rem;
+	transition: max-height .3s ease, opacity .25s ease, border-color .3s ease;
+}
+/* Fold the strip away on scroll so the sticky bar stays slim. */
+.site-header.is-scrolled .site-header__utility {
+	max-height: 0; opacity: 0; border-bottom-color: transparent;
+}
+.site-header__utility-inner {
+	width: min(var(--maxw), 94vw); margin-inline: auto;
+	display: flex; align-items: center; justify-content: flex-end;
+	gap: 1.75rem; padding: .5rem 0;
+}
+.utility__item {
+	display: inline-flex; align-items: center; gap: .45rem;
+	color: var(--sand-dim); font-size: .8rem; font-weight: 500;
+	letter-spacing: .02em; white-space: nowrap;
+}
+.utility__item:hover { color: var(--gold-2); }
+.utility__item .icon { width: .75rem; height: .75rem; fill: currentColor; flex: none; }
+.utility__item--address { margin-right: auto; }
+
+/* ---------- Header actions / reservation CTA ---------- */
+/* Positioned so the CTA and burger stay above the open mobile drawer. */
+.site-header__actions { display: flex; align-items: center; gap: .65rem; position: relative; z-index: 30; }
+/* Shared by the header CTA and the hero CTA; padding comes from .btn/.btn--sm
+   so the hero copy keeps full button size. The icon rides the font-size. */
+.reserve {
+	display: inline-flex; align-items: center; justify-content: center;
+	gap: .5rem; white-space: nowrap;
+}
+.btn--sm.reserve { padding: .6rem 1.15rem; }
+.reserve .icon { width: 1em; height: 1em; fill: currentColor; flex: none; }
+
+.site-logo img {
+	height: 3.875rem; width: auto; transition: height .3s ease;
+	filter: drop-shadow(0 2px 10px rgba(0,0,0,.5));
+}
+.site-header.is-scrolled .site-logo img { height: 3rem; }
+
+/* ---------- Primary nav ---------- */
+.main-navigation .menu {
+	list-style: none; margin: 0; padding: 0;
+	display: flex; align-items: center; gap: .35rem;
+}
+.main-navigation a {
+	color: var(--sand); font-weight: 500; font-size: .92rem;
+	letter-spacing: .03em; padding: .55rem .8rem; border-radius: 8px;
+	display: inline-block;
+}
+.main-navigation .menu > .menu-item > a { white-space: nowrap; }
+.main-navigation .menu > .menu-item > a:hover { color: var(--gold-2); }
+.main-navigation .menu-item-has-children > a::after { content: " ▾"; font-size: .7em; opacity: .8; }
+
+/* dropdowns */
+.main-navigation .sub-menu {
+	list-style: none; margin: 0; padding: .4rem;
+	position: absolute; min-width: 13.75rem;
+	background: rgba(9,26,32,.98); border: 1px solid var(--line);
+	border-radius: 12px; box-shadow: var(--shadow);
+	opacity: 0; visibility: hidden; transform: translateY(8px);
+	transition: opacity .2s ease, transform .2s ease, visibility .2s;
+	z-index: 20;
+}
+.main-navigation .menu-item-has-children { position: relative; }
+.main-navigation .menu-item-has-children:hover > .sub-menu,
+.main-navigation .menu-item-has-children:focus-within > .sub-menu {
+	opacity: 1; visibility: visible; transform: translateY(2px);
+}
+.main-navigation .sub-menu a { display: block; padding: .55rem .8rem; font-size: .88rem; }
+.main-navigation .sub-menu a:hover { background: rgba(232,160,75,.14); color: var(--gold-2); }
+
+/* mobile toggle */
+.nav-toggle {
+	display: none; background: none; border: 0; cursor: pointer;
+	width: 2.75rem; height: 2.5rem; padding: .5rem; position: relative;
+}
+.nav-toggle__bar {
+	display: block; height: 2px; width: 100%; background: var(--sand);
+	margin: .3125rem 0; border-radius: 2px; transition: transform .25s ease, opacity .25s ease;
+}
+.nav-open .nav-toggle__bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-open .nav-toggle__bar:nth-child(2) { opacity: 0; }
+.nav-open .nav-toggle__bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Inside an iframe (a Wix HTML embed), 100svh resolves to the FRAME's height,
+   not the browser window — so a tall embed box makes the hero swallow the whole
+   screen and push its buttons out of view. js/nav.js adds .is-framed and sets
+   --framed-hero-h from the real device screen, which is the closest thing to
+   "one viewport tall" that a frame can actually measure. */
+.is-framed .hero { min-height: var(--framed-hero-h, 780px); height: auto; }
+.is-framed .hero__content { padding: 6rem 1.25rem 4rem; }
+
+/* ---------- Hero ---------- */
+.hero {
+	position: relative; min-height: 100svh;
+	display: grid; place-items: center; text-align: center;
+	background-color: var(--ink-2);
+	color: var(--sand); overflow: hidden; isolation: isolate;
+}
+/* The photo lives on its own layer so it can drift without moving the text.
+   Inset past the edges so the scale-up never exposes a bare corner. */
+.hero::before {
+	content: ""; position: absolute; inset: -4%; z-index: 0;
+	background-image: var(--hero-img);
+	background-size: cover;
+	/* biased low: keeps the horizon and sun in frame on tall screens */
+	background-position: center 58%;
+	transform: scale(1.02);
+	animation: hero-drift 32s ease-in-out infinite alternate;
+}
+@keyframes hero-drift {
+	from { transform: scale(1.02); }
+	to   { transform: scale(1.11); }
+}
+
+.hero__overlay {
+	position: absolute; inset: 0; z-index: 1;
+	background:
+		/* pool of shade behind the text only, so the corners stay bright */
+		radial-gradient(56% 42% at 50% 54%, rgba(6,18,22,.72), transparent 74%),
+		/* nothing across the nav — the photo runs untouched up there — then
+		   settling into --ink so the next section joins on seamlessly
+		   instead of meeting a hard edge */
+		linear-gradient(to bottom,
+			rgba(6,18,22,0) 0%,
+			rgba(6,18,22,0) 22%,
+			rgba(6,18,22,.26) 52%,
+			rgba(11,31,38,.88) 88%,
+			var(--ink) 100%);
+}
+.hero__content { position: relative; z-index: 2; padding: 7rem 1.25rem 5rem; max-width: 47.5rem; }
+.hero__logo {
+	width: clamp(14.375rem, 40vw, 22.5rem); margin: 0 auto 1.25rem;
+	filter: drop-shadow(0 6px 24px rgba(0,0,0,.6));
+}
+/* Text shadows carry the legibility over bright water, so the overlay can stay
+   light enough to keep the sunset. */
+.hero__tagline {
+	font-family: var(--head); font-style: italic; font-weight: 500;
+	font-size: clamp(1.35rem, 3.4vw, 2.1rem); color: var(--gold-2);
+	letter-spacing: .04em; margin: 0 0 .75rem;
+	text-shadow: 0 2px 18px rgba(6,18,22,.85), 0 1px 3px rgba(6,18,22,.6);
+}
+.hero__sub {
+	font-size: clamp(1rem, 2vw, 1.2rem); color: var(--sand); margin: 0 auto 2rem;
+	max-width: 32.5rem;
+	text-shadow: 0 2px 14px rgba(6,18,22,.8), 0 1px 3px rgba(6,18,22,.55);
+}
+.hero__actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.hero__scroll {
+	position: absolute; bottom: 1.6rem; left: 50%; transform: translateX(-50%);
+	z-index: 2; font-size: 1.6rem; color: var(--sand); opacity: .8;
+	animation: bob 2s ease-in-out infinite;
+}
+@keyframes bob { 0%,100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 8px); } }
+
+/* ---------- About ---------- */
+.about { background: var(--ink-2); }
+.about__grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(2rem, 5vw, 4.5rem); align-items: center; }
+.about__media img { border-radius: var(--radius); box-shadow: var(--shadow); width: 100%; object-fit: cover; }
+.about__text h2 { color: var(--sand); }
+.about__text p { color: var(--sand-dim); }
+
+/* ---------- Info (address + hours) ---------- */
+.info { background: var(--ink); }
+.info__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.info__card {
+	background: var(--panel); border: 1px solid var(--line);
+	border-radius: var(--radius); padding: clamp(1.75rem, 4vw, 2.75rem);
+	box-shadow: var(--shadow);
+}
+.info__card h3 { color: var(--sand); }
+.info__card p { color: var(--sand-dim); }
+.info__phone { font-family: var(--head); font-size: 1.5rem; color: var(--gold-2); }
+.hours { list-style: none; margin: 0; padding: 0; }
+.hours li {
+	display: flex; justify-content: space-between; gap: 1rem;
+	padding: .5rem 0; border-bottom: 1px dashed var(--line); color: var(--sand-dim);
+}
+.hours li:last-child { border-bottom: 0; }
+.hours span:last-child { color: var(--gold-2); font-weight: 500; }
+
+/* ---------- Gallery ---------- */
+.gallery { background: var(--ink-2); }
+.gallery h2 { color: var(--sand); }
+.gallery__grid {
+	display: grid; grid-template-columns: repeat(4, 1fr);
+	grid-auto-rows: 12.5rem; gap: 1rem;
+}
+.gallery__item { margin: 0; overflow: hidden; border-radius: var(--radius); box-shadow: var(--shadow); }
+.gallery__item img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.gallery__item:hover img { transform: scale(1.07); }
+.gallery__item:nth-child(1) { grid-row: span 2; }
+.gallery__item:nth-child(6) { grid-column: span 2; }
+
+/* ---------- Reviews ---------- */
+.reviews { background: var(--ink); }
+.reviews h2 { color: var(--sand); }
+.reviews__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
+.review {
+	margin: 0; background: var(--panel); border: 1px solid var(--line);
+	border-radius: var(--radius); padding: 1.75rem; box-shadow: var(--shadow);
+	display: flex; flex-direction: column;
+}
+.review__stars { color: var(--gold); letter-spacing: 2px; margin-bottom: .75rem; }
+.review blockquote { margin: 0 0 1rem; color: var(--sand-dim); font-size: .98rem; flex: 1; }
+.review figcaption { font-family: var(--head); font-weight: 600; color: var(--sand); }
+
+/* ---------- Store ---------- */
+.section__lede { color: var(--sand-dim); margin: 0; }
+.store { background: var(--ink-2); }
+.store__grid {
+	display: grid; gap: 1rem;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.store__card {
+	display: flex; flex-direction: column; align-items: flex-start;
+	padding: 1.5rem; border-radius: var(--radius);
+	background: rgba(255,255,255,.04); border: 1px solid var(--line);
+	color: var(--sand);
+	transition: transform .2s ease, border-color .2s ease, background .2s ease;
+}
+.store__card:hover,
+.store__card:focus-visible {
+	transform: translateY(-4px); border-color: var(--gold);
+	background: rgba(232,160,75,.08); color: var(--sand);
+}
+.store__card-title { font-size: 1.15rem; margin: 0 0 .4rem; color: var(--sand); }
+.store__card-desc { color: var(--sand-dim); font-size: .9rem; margin: 0 0 1rem; }
+.store__card-go {
+	margin-top: auto; color: var(--gold); font-weight: 600;
+	font-size: .82rem; letter-spacing: .06em; text-transform: uppercase;
+}
+.store__card:hover .store__card-go { color: var(--gold-2); }
+
+.store__gift {
+	margin-top: 1.5rem; padding: 1.5rem 1.75rem; border-radius: var(--radius);
+	background: rgba(47,125,132,.16); border: 1px solid var(--line);
+	display: flex; align-items: center; justify-content: space-between;
+	gap: 1.25rem; flex-wrap: wrap;
+}
+.store__gift-text h3 { margin: 0 0 .25rem; font-size: 1.25rem; }
+.store__gift-text p { margin: 0; color: var(--sand-dim); font-size: .92rem; }
+.store__gift-actions { display: flex; gap: .6rem; flex-wrap: wrap; }
+
+/* ---------- Footer ---------- */
+.site-footer { background: #06151a; padding-top: clamp(2.5rem, 5vw, 4rem); }
+.site-footer__inner {
+	display: flex; align-items: center; justify-content: space-between;
+	gap: 1.5rem; flex-wrap: wrap; padding-bottom: 2rem;
+}
+.site-footer__logo { height: 4rem; width: auto; margin-bottom: .75rem; }
+.site-footer__brand p { color: var(--sand-dim); margin: 0; }
+.social { display: flex; gap: .75rem; }
+.social__link {
+	width: 3rem; height: 3rem; border-radius: 50%;
+	display: grid; place-items: center;
+	color: var(--sand-dim);
+	background: rgba(255,255,255,.06);
+	border: 1px solid var(--line);
+	transition: transform .2s ease, background .2s ease, color .2s ease,
+	            border-color .2s ease, box-shadow .2s ease;
+}
+/* Icons are inline SVG, so they take the chip's colour on hover. */
+.social__icon { width: 1.25rem; height: 1.25rem; fill: currentColor; display: block; }
+.social__link:hover,
+.social__link:focus-visible {
+	transform: translateY(-3px);
+	color: var(--ink);
+	background: var(--gold);
+	border-color: var(--gold);
+	box-shadow: 0 8px 18px rgba(232,160,75,.32);
+}
+.social__link:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 3px; }
+.site-footer__bar { border-top: 1px solid var(--line); padding: 1.45rem 0; }
+.site-footer__bar-inner {
+	display: flex; flex-direction: column; align-items: center;
+	gap: .8rem; text-align: center;
+}
+.site-footer__bar p { margin: 0; color: var(--sand-dim); font-size: .85rem; }
+/* Plain text credit — no chip, no hover state. The gold name against the
+   smaller uppercase label is what carries it. */
+.site-footer__credit {
+	display: inline-flex; align-items: baseline; gap: .48rem;
+	flex-wrap: wrap; justify-content: center;
+}
+.site-footer__credit-label {
+	font-size: .63rem; font-weight: 600; letter-spacing: .17em;
+	text-transform: uppercase; color: var(--sand-dim);
+}
+.site-footer__credit-name {
+	font-family: var(--head); font-weight: 700; font-size: .96rem;
+	color: var(--gold-2); letter-spacing: .01em;
+}
+/* Keyboard focus still needs a visible ring — that is focus, not hover. */
+.site-footer__credit:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 4px; border-radius: 4px; }
+
+/* ---------- Generic page/post (page.php, index.php) ---------- */
+.page-content { padding: 8rem 0 4rem; }
+.page-content .entry-title { color: var(--sand); }
+.page-content .entry-content a { text-decoration: underline; }
+
+/* ---------- Responsive ---------- */
+
+/* Between the drawer breakpoint and full width, the menu has to tighten to sit
+   alongside the logo and the reservation CTA on one line. */
+@media (min-width: 1025px) and (max-width: 1250px) {
+	.site-header__inner { gap: .75rem; }
+	.main-navigation .menu { gap: 0; }
+	.main-navigation a { padding: .55rem .5rem; font-size: .85rem; }
+}
+
+/* The nav collapses to a drawer earlier than the section grids do: eight
+   top-level items plus the reservation CTA stop fitting alongside the logo
+   well before 900px, and the menu starts wrapping mid-item. */
+@media (max-width: 1024px) {
+	.nav-toggle { display: block; z-index: 30; }
+
+	/* The drawer below is position:fixed and must resolve against the viewport.
+	   A backdrop-filter on the header would make the header its containing
+	   block, collapsing the drawer into the header strip once .is-scrolled
+	   lands. The background is already 96% opaque, so nothing is lost. */
+	.site-header.is-scrolled { backdrop-filter: none; }
+
+	.main-navigation {
+		position: fixed; inset: 0 0 0 auto; width: min(20rem, 82vw);
+		background: rgba(9,26,32,.98); backdrop-filter: blur(10px);
+		transform: translateX(100%);
+		/* visibility, not just the transform: a closed drawer parked off the
+		   right edge can widen the page on iOS Safari (Chrome does not do
+		   this), which shows as a blank strip down the right-hand side. It
+		   also keeps the closed menu out of the tab order. */
+		visibility: hidden;
+		transition: transform .3s ease, visibility .3s ease;
+		/* Top padding clears the header at its tallest (contact strip showing). */
+		padding: 7.5rem 1.25rem 2rem; overflow-y: auto; box-shadow: var(--shadow);
+	}
+	.nav-open .main-navigation { transform: translateX(0); visibility: visible; }
+	/* Keep the page from scrolling behind an open drawer. */
+	body.nav-locked { overflow: hidden; }
+	.main-navigation .menu { flex-direction: column; align-items: stretch; gap: .1rem; }
+	/* Block, so the divider spans the drawer and the ▾ can float to the edge —
+	   inline-block left both hugging the text width. */
+	.main-navigation .menu > .menu-item > a { display: block; padding: .8rem .6rem; border-bottom: 1px solid var(--line); }
+	.main-navigation .sub-menu {
+		position: static; opacity: 1; visibility: visible; transform: none;
+		box-shadow: none; border: 0; background: transparent; padding: 0 0 .4rem .8rem;
+		max-height: 0; overflow: hidden; transition: max-height .3s ease;
+	}
+	.main-navigation .menu-item-has-children.is-open > .sub-menu { max-height: 500px; }
+	.main-navigation .menu-item-has-children > a::after { content: " ▾"; float: right; }
+}
+
+@media (max-width: 900px) {
+	/* The full address is too long for a phone-width strip; the map link in
+	   the footer and the Visit card still carry it. */
+	.utility__item--address { display: none; }
+	.site-header__utility-inner { justify-content: center; gap: 1rem; }
+	.site-header__actions .reserve { padding: .5rem .95rem; font-size: .78rem; }
+
+	.about__grid { grid-template-columns: 1fr; }
+	.info__grid { grid-template-columns: 1fr; }
+	.gallery__grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 11.25rem; }
+	.gallery__item:nth-child(1) { grid-row: span 1; }
+	.gallery__item:nth-child(6) { grid-column: span 1; }
+}
+
+/* Phones: the vw terms in the hero clamps collapse to almost nothing at this
+   width, so everything bottoms out at its minimum and reads small against a
+   full-height photo. Set real sizes here instead. */
+@media (max-width: 768px) {
+	.hero__logo { width: min(74vw, 19.375rem); margin-bottom: 1.1rem; }
+	.hero__tagline { font-size: 1.9rem; margin-bottom: .7rem; }
+	.hero__sub { font-size: 1.06rem; line-height: 1.55; max-width: 34ch; margin-bottom: 1.8rem; }
+	.hero__actions .btn { font-size: .95rem; padding: .85rem 1.6rem; }
+}
+
+@media (max-width: 520px) {
+	.gallery__grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 8.75rem; }
+	.hero__logo { width: min(78vw, 18.125rem); }
+	.hero__tagline { font-size: 1.72rem; }
+	.hero__sub { font-size: 1.02rem; }
+	.hero__actions { gap: .7rem; }
+	.hero__actions .btn { width: 100%; max-width: 18.125rem; }
+
+	/* Header only: not enough room for logo + label + burger, so drop to a dial
+	   button. The link's aria-label still announces it in full. The hero copy
+	   keeps its label and goes full-width with the other hero buttons. */
+	.site-header__actions .reserve { width: 2.625rem; height: 2.625rem; padding: 0; border-radius: 50%; }
+	.site-header__actions .reserve__label { display: none; }
+	.site-header__actions .reserve .icon { width: .9375rem; height: .9375rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html { scroll-behavior: auto; }
+	.hero__scroll { animation: none; }
+	/* hold the hero photo still rather than drifting */
+	.hero::before { animation: none; transform: scale(1.02); }
+	* { transition: none !important; }
+}
+
+/* ---------- Entertainment page ---------- */
+/* A subpage banner rather than the home page's full-height hero: sized in rem
+   and padding instead of svh, so it needs none of the .is-framed correction. */
+.page-hero {
+	position: relative; isolation: isolate; overflow: hidden; text-align: center;
+	background-color: var(--ink-2);
+	padding: clamp(8.5rem, 17vw, 11rem) 0 clamp(3rem, 7vw, 4.5rem);
+}
+.page-hero::before {
+	content: ""; position: absolute; inset: 0; z-index: 0;
+	background-image: var(--hero-img); background-size: cover;
+	background-position: center 62%;
+}
+.page-hero::after {
+	content: ""; position: absolute; inset: 0; z-index: 1;
+	background:
+		radial-gradient(72% 62% at 50% 50%, rgba(6,18,22,.74), transparent 80%),
+		linear-gradient(to bottom, rgba(6,18,22,.62) 0%, rgba(11,31,38,.9) 72%, var(--ink) 100%);
+}
+.page-hero__inner { position: relative; z-index: 2; }
+
+
+
+/* ---------- Banner copy ---------- */
+/* Same treatment the menu page gives its title: set straight over the deck
+   photo, so the legibility is carried by the text shadows rather than by a
+   band behind them. */
+.ent-title {
+	font-family: var(--head); font-weight: 800; line-height: 1;
+	font-size: clamp(2.8rem, 9vw, 5rem); margin: 0 0 .5rem; color: var(--sand);
+	text-shadow: 0 3px 20px rgba(6,18,22,.85), 0 1px 3px rgba(6,18,22,.6);
+}
+.ent-lede {
+	margin: 0 auto; max-width: 32rem; color: var(--sand);
+	text-shadow: 0 2px 14px rgba(6,18,22,.85), 0 1px 3px rgba(6,18,22,.6);
+}
+
+/* ---------- Closing CTA ---------- */
+.hh-cta { background: var(--ink-2); text-align: center; }
+.hh-cta__actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1.75rem; }
+
+@media (max-width: 520px) {
+	.hh-cta__actions .btn { width: 100%; max-width: 18.125rem; }
+}
+
+/* ---------- Calendar ---------- */
+.ent-calendar { background: var(--ink-2); }
+.ent-cal {
+	background: var(--panel); border: 1px solid var(--line);
+	border-radius: var(--radius); box-shadow: var(--shadow);
+	overflow: hidden;
+}
+/* Matched to the Wix page's own background, so that if a crop ever sits a few
+   pixels off, the sliver that shows is indistinguishable from the card. */
+.ent-cal.is-live { background: #00373d; }
+
+/* The window the live page is viewed through: the frame inside is laid out at
+   that layout's full page width, then shifted and scaled so only the calendar
+   is in view. See CAL_VIEW in the script for the numbers. */
+.ent-cal__window { position: relative; width: 100%; overflow: hidden; }
+.ent-cal__live {
+	position: absolute; top: 0; left: 0; border: 0;
+	transform-origin: top left;
+}
+
+.ent-cal__note {
+	text-align: center; color: var(--sand-dim); font-size: .88rem;
+	margin: 1.5rem auto 0; max-width: 34rem;
+}
+.ent-cal__note a { text-decoration: underline; }
+
+/* The standby card: what shows before the script runs, with JS off, and on a
+   desktop window dragged too narrow for the desktop calendar to stay legible.
+   The lineup is never a dead end, just one click further away. */
+.ent-cal__fallback {
+	display: grid; place-items: center; text-align: center; gap: .35rem;
+	min-height: 22rem; padding: clamp(2rem, 6vw, 3.5rem) 1.5rem;
+	background: var(--panel); border-radius: calc(var(--radius) - 4px);
+}
+.ent-cal__fallback h3 { color: var(--sand); margin: 0; }
+.ent-cal__fallback p { color: var(--sand-dim); margin: 0 0 1rem; max-width: 26rem; }
+
+@media (max-width: 560px) {
+	.ent-cal__fallback .btn { width: 100%; max-width: 18.125rem; }
+}
+</style>
+<!--
+  ===========================================================================
+  SALTWATER 75 — ENTERTAINMENT PAGE (single file)
+  ===========================================================================
+  Everything in one document: markup, all CSS, and all JavaScript inlined.
+  No local files needed — double-click it, or drop it on any host as-is.
+
+  Also safe to paste into a Wix HTML embed: it detects being inside a frame
+  and sizes the hero from the real screen, since viewport units inside a
+  frame measure the frame, not the browser window.
+
+  Still loaded from the internet:
+    • Google Fonts  — Playfair Display + Montserrat
+    • Photos        — hot-linked from static.wixstatic.com
+  ===========================================================================
+-->
+</head>
+<body>
+<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+
+<header id="masthead" class="site-header" data-sticky>
+
+  <div class="site-header__utility">
+    <div class="site-header__utility-inner">
+      <a class="utility__item utility__item--address" href="https://www.google.com/maps/search/?api=1&amp;query=115+75th+Street+Ocean+City+MD+21842" target="_blank" rel="noopener">
+        <svg class="icon" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></svg>
+        <span>115 75th Street, Ocean City, MD 21842</span>
+      </a>
+      <a class="utility__item" href="tel:+14105247575">
+        <svg class="icon" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64c0 247.4 200.6 448 448 448 18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></svg>
+        <span>410-524-7575</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-header__inner">
+    <div class="site-branding">
+      <a class="site-logo" href="#" rel="home" aria-label="Saltwater 75">
+        <img src="https://static.wixstatic.com/media/c57fb0_ff950f6488bf48a5b535d179ea75521a~mv2.png" alt="Saltwater 75" width="251" height="92">
+      </a>
+    </div>
+    <nav id="site-navigation" class="main-navigation" aria-label="Primary">
+      <ul id="primary-menu" class="menu nav-menu">
+        <li class="menu-item"><a href="https://www.saltwater75.com/" target="_blank" rel="noopener">Home</a></li>
+        <li class="menu-item"><a href="https://www.saltwater75.com/happy-hour" target="_blank" rel="noopener">Happy Hour</a></li>
+        <li class="menu-item"><a href="https://www.saltwater75.com/general-5" target="_blank" rel="noopener">Menu</a></li>
+        <li class="menu-item menu-item-has-children"><a href="https://www.saltwater75.com/shop" target="_blank" rel="noopener">Store</a>
+          <ul class="sub-menu">
+            <li class="menu-item"><a href="https://www.saltwater75.com/teeshirts" target="_blank" rel="noopener">T-Shirts</a></li>
+            <li class="menu-item"><a href="https://www.saltwater75.com/shop-5" target="_blank" rel="noopener">Long Sleeve + Sweatshirts</a></li>
+            <li class="menu-item"><a href="https://www.saltwater75.com/hats" target="_blank" rel="noopener">Hats</a></li>
+            <li class="menu-item"><a href="https://www.saltwater75.com/accessories" target="_blank" rel="noopener">Accessories</a></li>
+            <li class="menu-item"><a href="https://www.saltwater75.com/giftcards" target="_blank" rel="noopener">Gift Cards + AO Game Card</a></li>
+            <li class="menu-item"><a href="https://www.saltwater75.com/shop-2" target="_blank" rel="noopener">Full Catalog</a></li>
+          </ul>
+        </li>
+        <li class="menu-item"><a href="#top" aria-current="page">Entertainment</a></li>
+        <li class="menu-item menu-item-has-children"><a href="https://www.saltwater75.com/contact" target="_blank" rel="noopener">Contact</a>
+          <ul class="sub-menu">
+            <li class="menu-item"><a href="https://www.saltwater75.com/general-6" target="_blank" rel="noopener">Plan A Party!</a></li>
+            <li class="menu-item"><a href="https://www.saltwater75.com/frequently-asked" target="_blank" rel="noopener">Frequently Asked</a></li>
+            <li class="menu-item"><a href="https://www.saltwater75.com/contact" target="_blank" rel="noopener">Hours &amp; Directions</a></li>
+            <li class="menu-item"><a href="https://forms.wix.com/r/7024068827293942238" target="_blank" rel="noopener">Employment</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+    <div class="site-header__actions">
+      <a class="btn btn--solid btn--sm reserve" href="tel:+14105247575" aria-label="Make a reservation — call 410-524-7575">
+        <svg class="icon" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64c0 247.4 200.6 448 448 448 18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></svg>
+        <span class="reserve__label">Make a Reservation</span>
+      </a>
+      <button class="nav-toggle" aria-controls="primary-menu" aria-expanded="false">
+        <span class="nav-toggle__bar"></span><span class="nav-toggle__bar"></span><span class="nav-toggle__bar"></span>
+        <span class="screen-reader-text">Menu</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="content" class="site-content">
+
+  <section id="top" class="page-hero" style="--hero-img:url('https://static.wixstatic.com/media/8b7d81_d75404662ebc4e53810e158d04ebcdf7~mv2.jpg');">
+    <div class="wrap page-hero__inner">
+      <h1 class="ent-title">Entertainment</h1>
+      <p class="ent-lede">Live music on the bay all summer long &mdash; check the calendar below for who&rsquo;s playing.</p>
+    </div>
+  </section>
+
+  <section id="calendar" class="section ent-calendar">
+    <div class="wrap">
+      <div class="section__head">
+        <span class="eyebrow">What&rsquo;s on</span>
+        <h2>The Lineup</h2>
+      </div>
+
+      <!-- The calendar is the one on the Wix site, shown live through this
+           card — see CAL_VIEW in the script for how it is framed, on a phone
+           as well as on a desktop. The panel below stands in until then. -->
+      <div class="ent-cal" id="ent-cal">
+        <div class="ent-cal__fallback">
+          <h3>See who&rsquo;s playing</h3>
+          <p>The full entertainment schedule, updated as the summer lineup is booked.</p>
+          <a class="btn btn--solid" href="https://www.saltwater75.com/entertainment-calendar" target="_blank" rel="noopener">Open the Calendar</a>
+        </div>
+      </div>
+
+      <p class="ent-cal__note">
+        <a href="https://www.saltwater75.com/entertainment-calendar" target="_blank" rel="noopener">Open the full calendar &#8599;</a><br>
+        For booking inquiries for Summer 2026, please contact <a href="mailto:Info@saltwater75.com">Info@saltwater75.com</a>.
+      </p>
+    </div>
+  </section>
+
+  <section id="visit" class="section hh-cta">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="section__lede">Open daily 11:00am &ndash; 12:00am at 115 75th Street. Call ahead for larger groups.</p>
+      </div>
+      <div class="hh-cta__actions">
+        <a class="btn btn--solid reserve" href="tel:+14105247575" aria-label="Make a reservation — call 410-524-7575">
+          <svg class="icon" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64c0 247.4 200.6 448 448 448 18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></svg>
+          <span class="reserve__label">Make a Reservation</span>
+        </a>
+        <a class="btn btn--ghost" href="https://www.saltwater75.com/general-5" target="_blank" rel="noopener">Full Menu</a>
+        <a class="btn btn--ghost" href="https://www.google.com/maps/search/?api=1&amp;query=115+75th+Street+Ocean+City+MD+21842" target="_blank" rel="noopener">Get Directions</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="colophon" class="site-footer">
+  <div class="wrap site-footer__inner">
+    <div class="site-footer__brand">
+      <img class="site-footer__logo" src="https://static.wixstatic.com/media/c57fb0_ff950f6488bf48a5b535d179ea75521a~mv2.png" alt="Saltwater 75">
+      <p>115 75th Street, Ocean City, MD 21842<br><a href="tel:+14105247575">410-524-7575</a></p>
+    </div>
+    <nav class="social" aria-label="Social">
+      <a class="social__link" href="https://www.instagram.com/saltwater75oc" target="_blank" rel="noopener" aria-label="Instagram"><svg class="social__icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg></a>
+      <a class="social__link" href="https://www.facebook.com/sw75oc" target="_blank" rel="noopener" aria-label="Facebook"><svg class="social__icon" viewBox="0 0 320 512" aria-hidden="true" focusable="false"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></svg></a>
+      <a class="social__link" href="https://www.tiktok.com/@saltwater75s" target="_blank" rel="noopener" aria-label="TikTok"><svg class="social__icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M448 209.91a210.06 210.06 0 0 1-122.77-39.25v178.72A162.55 162.55 0 1 1 185 188.31v89.89a74.62 74.62 0 1 0 52.23 71.18V0h88a121.18 121.18 0 0 0 1.86 22.17 122.18 122.18 0 0 0 53.91 80.22 121.43 121.43 0 0 0 67 20.14z"/></svg></a>
+    </nav>
+  </div>
+  <div class="site-footer__bar">
+    <div class="wrap site-footer__bar-inner">
+      <a class="site-footer__credit" href="https://www.welschmarketing.com" target="_blank" rel="noopener">
+        <span class="site-footer__credit-label">Built by</span>
+        <span class="site-footer__credit-name">Welsch Marketing</span>
+      </a>
+      <p>&copy; 2026 by Saltwater 75</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+/**
+ * Saltwater 75 — navigation behaviour.
+ * Sticky header state on scroll, mobile toggle, dropdowns, tel: handling.
+ */
+(function () {
+	'use strict';
+
+	// Running inside an iframe (e.g. pasted into a Wix HTML embed) changes what
+	// viewport units mean — see the .is-framed rules in style.css.
+	var framed;
+	try {
+		framed = window.self !== window.top;
+	} catch (e) {
+		framed = true;   // cross-origin access threw, which itself means framed
+	}
+	/* A frame lays out at the WIDGET's width, not the device's, and the host
+	   then paints that frame at whatever size it likes. Wix's mobile view is
+	   the case that bites: it lays an embed out on a narrow grid and stretches
+	   the result across the whole phone screen. That magnifies every rem and
+	   every pixel in this file, and the design comes out looking blown up even
+	   though its proportions are right. A <meta viewport> cannot fix it — that
+	   tag is ignored inside an iframe.
+
+	   The magnification is knowable, though. screen.width is the real device
+	   width and stays readable from inside a frame, so the factor is simply
+	   device width ÷ our layout width. Shrinking the root font size by exactly
+	   that factor cancels it out, and since the chrome above is sized in rem,
+	   the whole design lands back at its intended size. */
+	function syncFrameScale() {
+		var layoutW = document.documentElement.clientWidth;
+		var deviceW = (window.screen && window.screen.width) || 0;
+		var scale   = 1;
+
+		/* Only phones get the correction. A desktop Wix page hands its embed a
+		   roughly 980px frame and draws it at life size inside a much wider
+		   screen — no magnification, so the same ratio there would shrink a
+		   perfectly good desktop layout by a third. The stretch only happens
+		   where the host lays the page out narrower than the screen it is
+		   painting onto, which is the phone case. */
+		if (layoutW && deviceW && deviceW <= 820 && layoutW < deviceW) {
+			// Clamped: a bad reading must never shrink the page to nothing.
+			scale = Math.max(0.7, layoutW / deviceW);
+		}
+		document.documentElement.style.fontSize = (16 * scale) + 'px';
+
+		// 100svh would resolve to the frame's height, so approximate a real
+		// viewport from the device screen — that IS readable from inside a
+		// frame. It has to be expressed in our own (pre-magnification) units,
+		// hence the same scale, or the hero comes out a screen and a half tall.
+		var screenH = (window.screen && window.screen.availHeight) || 900;
+		var heroH   = Math.max(420, Math.min((screenH - 130) * scale, 950));
+		document.documentElement.style.setProperty('--framed-hero-h', heroH + 'px');
+	}
+
+	if (framed) {
+		document.documentElement.classList.add('is-framed');
+		syncFrameScale();
+		// Rotating the phone changes both readings.
+		window.addEventListener('resize', syncFrameScale);
+		window.addEventListener('orientationchange', syncFrameScale);
+	}
+
+	var header = document.querySelector('.site-header[data-sticky]');
+	var toggle = document.querySelector('.nav-toggle');
+	var nav    = document.getElementById('site-navigation');
+
+	// Solid header once the user scrolls past the hero-ish threshold.
+	function onScroll() {
+		if (!header) return;
+		if (window.scrollY > 40) {
+			header.classList.add('is-scrolled');
+		} else {
+			header.classList.remove('is-scrolled');
+		}
+	}
+	window.addEventListener('scroll', onScroll, { passive: true });
+	onScroll();
+
+	// Must match the drawer breakpoint in style.css.
+	var mobile = window.matchMedia('(max-width: 1024px)');
+
+	function setOpen(open) {
+		header.classList.toggle('nav-open', open);
+		document.body.classList.toggle('nav-locked', open);
+		toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+	}
+
+	// Mobile menu toggle.
+	if (toggle && nav) {
+		toggle.addEventListener('click', function () {
+			setOpen(!header.classList.contains('nav-open'));
+		});
+
+		// Leaving the mobile breakpoint would strand the drawer open. Safari
+		// before 14 only has the deprecated addListener.
+		var onBreakpoint = function (e) { if (!e.matches) setOpen(false); };
+		if (mobile.addEventListener) mobile.addEventListener('change', onBreakpoint);
+		else if (mobile.addListener) mobile.addListener(onBreakpoint);
+
+		// Tapping the page behind the drawer closes it.
+		document.addEventListener('click', function (e) {
+			if (!header.classList.contains('nav-open')) return;
+			if (nav.contains(e.target) || toggle.contains(e.target)) return;
+			setOpen(false);
+		});
+
+		document.addEventListener('keydown', function (e) {
+			if (e.key === 'Escape' && header.classList.contains('nav-open')) {
+				setOpen(false);
+				toggle.focus();
+			}
+		});
+
+		// Tap-to-open submenus on touch / small screens.
+		nav.querySelectorAll('.menu-item-has-children > a').forEach(function (link) {
+			link.addEventListener('click', function (e) {
+				if (mobile.matches) {
+					e.preventDefault();
+					link.parentElement.classList.toggle('is-open');
+				}
+			});
+		});
+
+		// Close the mobile menu once a real destination is picked — including the
+		// links that open in a new tab, which used to leave the drawer sitting
+		// open over the page. Submenu parents are excluded: on mobile their tap
+		// only expands the children.
+		nav.querySelectorAll('a').forEach(function (link) {
+			var isParent = link.parentElement.classList.contains('menu-item-has-children');
+			link.addEventListener('click', function () {
+				if (isParent && mobile.matches) return;
+				setOpen(false);
+			});
+		});
+	}
+
+	/* ---- tel: links --------------------------------------------------------
+	   Every device gets the real tel: navigation, so "Make a Reservation" hands
+	   off to whatever places calls there: the dialer on a phone, FaceTime on a
+	   Mac (which rings through a paired iPhone), the registered handler on
+	   Windows. Nothing is intercepted — the click must not be swallowed.
+
+	   Inside a Wix embed the handoff has to be aimed at the top document, or
+	   the frame swallows it and the button does nothing.
+
+	   The one real gap is a desktop with no handler registered at all, where
+	   the click is silently ignored. Nothing can ask the browser whether a
+	   handler exists, so infer it: handing off to another app takes focus away
+	   from the page. If focus is still here a beat later, no app opened, and
+	   only then does the number appear with a copy button. */
+	var telLinks = document.querySelectorAll('a[href^="tel:"]');
+	if (framed) {
+		telLinks.forEach(function (a) { a.setAttribute('target', '_top'); });
+	}
+
+	if (!window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
+		var PHONE = '410-524-7575';
+		var pop = document.createElement('div');
+		pop.className = 'callpop';
+		pop.setAttribute('role', 'dialog');
+		pop.setAttribute('aria-label', 'Call ' + PHONE);
+		pop.innerHTML = '<strong>' + PHONE + '</strong><button type="button">Copy</button>';
+		document.body.appendChild(pop);
+
+		var copyBtn = pop.querySelector('button');
+		var hidePop = function () { pop.classList.remove('is-open'); };
+		var timer   = null;
+		var disarm  = function () { if (timer) { clearTimeout(timer); timer = null; } };
+
+		// Focus leaving the page means an app took the call: stand down.
+		window.addEventListener('blur', disarm);
+		window.addEventListener('pagehide', disarm);
+		document.addEventListener('visibilitychange', function () { if (document.hidden) disarm(); });
+
+		var showPop = function (r) {
+			pop.classList.add('is-open');
+			var pw = pop.offsetWidth;
+			pop.style.top  = Math.min(r.bottom + 10, window.innerHeight - 60) + 'px';
+			pop.style.left = Math.max(10, Math.min(r.left + r.width / 2 - pw / 2,
+			                                       window.innerWidth - pw - 10)) + 'px';
+			copyBtn.textContent = 'Copy';
+		};
+
+		document.addEventListener('click', function (e) {
+			var el = e.target.closest ? e.target : e.target.parentElement;
+			var link = el && el.closest ? el.closest('a[href^="tel:"]') : null;
+			if (link) {
+				// No preventDefault: the browser navigates and the dialer opens.
+				var r = link.getBoundingClientRect();
+				disarm();
+				hidePop();
+				timer = setTimeout(function () {
+					timer = null;
+					if (document.hasFocus && !document.hasFocus()) return;
+					showPop(r);
+				}, 1500);
+				return;
+			}
+			if (!pop.contains(e.target)) hidePop();
+		});
+
+		copyBtn.addEventListener('click', function () {
+			var done = function (m) {
+				copyBtn.textContent = m;
+				setTimeout(function () { copyBtn.textContent = 'Copy'; }, 1600);
+			};
+			if (navigator.clipboard && navigator.clipboard.writeText) {
+				navigator.clipboard.writeText(PHONE).then(function () { done('Copied'); })
+				                                    .catch(function () { done('Select it'); });
+			} else { done('Select it'); }
+		});
+
+		document.addEventListener('keydown', function (e) {
+			if (e.key === 'Escape') { disarm(); hidePop(); }
+		});
+	}
+
+	/* ---- Entertainment calendar --------------------------------------------
+	   The calendar here IS the one on the Wix site — the same Boom Calendar
+	   component, live, so whatever gets booked over there shows up here with
+	   nothing to keep in step.
+
+	   It has to be done by looking at the Wix page through a window rather than
+	   by pasting the calendar's own embed code: that calendar is a Wix app, not
+	   an ordinary embed, and it only initialises inside a Wix page — dropped in
+	   a plain iframe anywhere else it loads blank. So the frame below loads the
+	   whole entertainment page and is then shifted and scaled until only the
+	   calendar is in view.
+
+	   Wix serves two different layouts, and which one arrives is decided by the
+	   user agent — not by how wide the frame is — so the crop has to be chosen
+	   the same way. Both are measured in their own layout's pixels:
+	     frame  the width that layout is built for (980 and 320 by design; the
+	            desktop one gets 1000 so it clears its own minimum)
+	     x, y   top-left corner of the calendar within that page
+	     w, h   its size, straight off the Wix component
+	   Each is then scaled to fill the card, so the calendar lands at the size a
+	   visitor would see on that device anyway. If Wix is ever re-laid-out and a
+	   crop slips, these numbers are the only thing to re-measure. */
+	var CAL_VIEW = {
+		url: 'https://www.saltwater75.com/entertainment-calendar',
+		desktop: { frame: 1000, x: 50, y: 344, w: 900, h: 835 },
+		mobile:  { frame:  320, x: 20, y: 309, w: 280, h: 255 },
+		/* Only applies to the desktop crop: a desktop browser dragged narrower
+		   than this would shrink a 900px calendar past readable, and it still
+		   gets served the desktop layout, so the standby card takes over. */
+		minWidth: 700
+	};
+
+	var calBox = document.getElementById('ent-cal');
+	if (calBox) {
+		var standby = calBox.querySelector('.ent-cal__fallback');
+
+		/* Same test Wix's own server makes. Getting this wrong would crop the
+		   wrong layout, so it stays deliberately close to what they look for. */
+		var onPhone = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i
+		              .test(navigator.userAgent);
+		var view = onPhone ? CAL_VIEW.mobile : CAL_VIEW.desktop;
+
+		var win = document.createElement('div');
+		win.className = 'ent-cal__window';
+		win.style.display = 'none';
+
+		var frame = document.createElement('iframe');
+		frame.className = 'ent-cal__live';
+		frame.title = 'Saltwater 75 entertainment calendar';
+		frame.setAttribute('scrolling', 'no');   /* keeps the rest of that page out of view */
+		frame.style.width  = view.frame + 'px';
+		/* Tall enough to reach the bottom of the calendar, and no taller. */
+		frame.style.height = (view.y + view.h + 40) + 'px';
+		win.appendChild(frame);
+		calBox.appendChild(win);
+
+		/* Scale the calendar to fill the card and give the window the height that
+		   leaves. Re-run on resize, so a rotation or a dragged window re-fits. */
+		var fitCal = function () {
+			var boxW = calBox.clientWidth;
+			var live = onPhone || boxW >= CAL_VIEW.minWidth;
+
+			win.style.display     = live ? 'block' : 'none';
+			standby.style.display = live ? 'none'  : '';
+			calBox.className = live ? 'ent-cal is-live' : 'ent-cal';
+			if (!live) return;
+
+			/* Deferred until it is going to be shown, so a narrow desktop window
+			   never pays for loading the Wix page behind it. */
+			if (!frame.src) frame.src = CAL_VIEW.url;
+
+			var scale = boxW / view.w;
+			frame.style.transform = 'scale(' + scale + ') translate(' +
+			                        (-view.x) + 'px,' + (-view.y) + 'px)';
+			win.style.height = (view.h * scale) + 'px';
+		};
+		fitCal();
+		window.addEventListener('resize', fitCal);
+		window.addEventListener('orientationchange', fitCal);
+	}
+})();
+</script>
+</body>
+</html>
