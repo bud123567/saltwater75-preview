@@ -690,19 +690,32 @@ p { margin: 0 0 1rem; }
 	.ent-cal__dow-full { display: inline; }
 }
 
-/* The month in words, under the grid. Only earns its place where the cells are
-   too narrow to spell an act out; past that the grid already says it. */
-.ent-cal__agenda { margin-top: 1.25rem; border-top: 1px solid var(--line); padding-top: .5rem; }
+/* The month in words, under the grid — modelled on Boom's own agenda view,
+   which is the layout that actually works on a phone: date rail down the left,
+   act and set time to the right of it. */
+.ent-cal__agenda { margin-top: 1.25rem; border-top: 1px solid var(--line); padding-top: .25rem; }
 .ent-cal__agenda-row {
-	display: flex; gap: .85rem; align-items: baseline;
-	padding: .55rem .25rem; border-bottom: 1px solid rgba(246,239,228,.07);
+	display: flex; gap: 1rem; align-items: center;
+	padding: .7rem .25rem; border-bottom: 1px solid rgba(246,239,228,.07);
 }
 .ent-cal__agenda-row:last-child { border-bottom: 0; }
 .ent-cal__agenda-date {
-	flex: 0 0 4.25rem; color: var(--gold-2);
-	font-size: .78rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+	flex: 0 0 3.1rem; text-align: center; line-height: 1.1;
+	border-right: 1px solid var(--line); padding-right: .75rem;
 }
-.ent-cal__agenda-acts { color: var(--sand); font-size: .92rem; line-height: 1.4; }
+.ent-cal__agenda-day {
+	display: block; font-family: var(--head); font-size: 1.35rem;
+	font-weight: 700; color: var(--gold-2);
+}
+.ent-cal__agenda-dow {
+	display: block; font-size: .62rem; font-weight: 600;
+	letter-spacing: .1em; text-transform: uppercase; color: var(--teal);
+}
+.ent-cal__agenda-acts { color: var(--sand); font-size: .95rem; line-height: 1.35; }
+.ent-cal__agenda-act + .ent-cal__agenda-act { margin-top: .4rem; }
+.ent-cal__agenda-time {
+	display: block; font-size: .78rem; color: var(--sand-dim); letter-spacing: .01em;
+}
 @media (min-width: 700px) { .ent-cal__agenda { display: none; } }
 
 .ent-cal__empty {
@@ -836,32 +849,32 @@ p { margin: 0 0 1rem; }
            tools/sync-events.js. -->
       <script type="application/json" id="ent-events">
       [
-      {"date": "2026-07-31", "title": "Joey Fitz"},
-      {"date": "2026-08-01", "title": "Abrielle Villegas"},
-      {"date": "2026-08-06", "title": "Two Pistols"},
-      {"date": "2026-08-07", "title": "Relicoustic"},
-      {"date": "2026-08-08", "title": "Joey Fitz"},
-      {"date": "2026-08-14", "title": "Dylan Canfield"},
-      {"date": "2026-08-15", "title": "Endless Ember"},
-      {"date": "2026-08-20", "title": "Two Pistols"},
-      {"date": "2026-08-22", "title": "Cecilia Grace"},
-      {"date": "2026-08-27", "title": "Everett Spells"},
-      {"date": "2026-08-28", "title": "On the Edge"},
-      {"date": "2026-08-28", "title": "Reagan Kent"},
-      {"date": "2026-08-29", "title": "Dylan Canfield"},
-      {"date": "2026-09-03", "title": "Everett Spells"},
-      {"date": "2026-09-04", "title": "Pistol Whipped"},
-      {"date": "2026-09-04", "title": "Rogue Citizens"},
-      {"date": "2026-09-05", "title": "Dylan Canfield"},
-      {"date": "2026-09-11", "title": "Relicoustic"},
-      {"date": "2026-09-12", "title": "Cecilia Grace"},
-      {"date": "2026-09-19", "title": "Endless Ember"},
-      {"date": "2026-09-24", "title": "Everett Spells"},
-      {"date": "2026-09-25", "title": "On the Edge"},
-      {"date": "2026-10-09", "title": "On the Edge"},
-      {"date": "2026-10-10", "title": "Pistol Whipped"},
-      {"date": "2026-11-13", "title": "On the Edge"},
-      {"date": "2026-12-11", "title": "On the Edge"}
+      {"date":"2026-07-31","title":"Joey Fitz"},
+      {"date":"2026-08-01","title":"Abrielle Villegas"},
+      {"date":"2026-08-06","title":"Two Pistols"},
+      {"date":"2026-08-07","title":"Relicoustic"},
+      {"date":"2026-08-08","title":"Joey Fitz"},
+      {"date":"2026-08-14","title":"Dylan Canfield"},
+      {"date":"2026-08-15","title":"Endless Ember"},
+      {"date":"2026-08-20","title":"Two Pistols","time":"4:00 pm – 8:00 pm"},
+      {"date":"2026-08-22","title":"Cecilia Grace","time":"4:00 pm – 8:00 pm"},
+      {"date":"2026-08-27","title":"Everett Spells","time":"4:00 pm – 8:00 pm"},
+      {"date":"2026-08-28","title":"On the Edge","time":"8:00 pm – 11:00 pm"},
+      {"date":"2026-08-28","title":"Reagan Kent","time":"4:00 pm – 8:00 pm"},
+      {"date":"2026-08-29","title":"Dylan Canfield","time":"4:00 pm – 8:00 pm"},
+      {"date":"2026-09-03","title":"Everett Spells","time":"4:00 pm – 8:00 pm"},
+      {"date":"2026-09-04","title":"Pistol Whipped","time":"8:00 pm – 11:00 pm"},
+      {"date":"2026-09-04","title":"Rogue Citizens","time":"4:00 pm – 8:00 pm"},
+      {"date":"2026-09-05","title":"Dylan Canfield","time":"4:00 pm – 8:00 pm"},
+      {"date":"2026-09-11","title":"Relicoustic","time":"4:00 pm – 8:00 pm"},
+      {"date":"2026-09-12","title":"Cecilia Grace","time":"4:00 pm – 8:00 pm"},
+      {"date":"2026-09-19","title":"Endless Ember","time":"4:00 pm – 8:00 pm"},
+      {"date":"2026-09-24","title":"Everett Spells","time":"4:00 pm – 8:00 pm"},
+      {"date":"2026-09-25","title":"On the Edge","time":"8:00 pm – 11:00 pm"},
+      {"date":"2026-10-09","title":"On the Edge","time":"8:00 pm – 11:00 pm"},
+      {"date":"2026-10-10","title":"Pistol Whipped","time":"8:00 pm – 11:00 pm"},
+      {"date":"2026-11-13","title":"On the Edge","time":"8:00 pm – 11:00 pm"},
+      {"date":"2026-12-11","title":"On the Edge","time":"8:00 pm – 11:00 pm"}
       ]
       </script>
 
@@ -1301,9 +1314,16 @@ p { margin: 0 0 1rem; }
 				agendaEl.innerHTML = days.length ? days.map(function (k) {
 					var dd = new Date(k + 'T12:00:00');
 					return '<div class="ent-cal__agenda-row">' +
-					       '<span class="ent-cal__agenda-date">' + DOW[dd.getDay()] + ' ' + dd.getDate() + '</span>' +
+					       '<span class="ent-cal__agenda-date">' +
+					         '<span class="ent-cal__agenda-day">' + dd.getDate() + '</span>' +
+					         '<span class="ent-cal__agenda-dow">' + DOW[dd.getDay()] + '</span>' +
+					       '</span>' +
 					       '<span class="ent-cal__agenda-acts">' +
-					       byDate[k].map(function (ev) { return esc(ev.title); }).join(' &middot; ') +
+					       byDate[k].map(function (ev) {
+					         return '<span class="ent-cal__agenda-act">' + esc(ev.title) +
+					                (ev.time ? '<span class="ent-cal__agenda-time">' + esc(ev.time) + '</span>' : '') +
+					                '</span>';
+					       }).join('') +
 					       '</span></div>';
 				}).join('') : '<div class="ent-cal__agenda-row"><span class="ent-cal__agenda-acts">' +
 				              'Nothing booked this month yet &mdash; check back soon.</span></div>';
@@ -1327,7 +1347,12 @@ p { margin: 0 0 1rem; }
 		   window lands on the right one. */
 		var fit = function () {
 			var boxW = calBox.clientWidth;
-			var live = onPhone || boxW >= CAL_VIEW.minWidth;
+			/* Phones get the drawn version: Wix's mobile widget opens on a month
+			   grid with the act names blanked out, and its agenda view — the one
+			   that does name them, with set times — is behind a menu we cannot
+			   reach into from out here. Flip this to `onPhone ||` if the app's
+			   default view is ever set to Agenda on Boom's side. */
+			var live = !onPhone && boxW >= CAL_VIEW.minWidth;
 			var haveGrid = drawGrid();
 
 			win.style.display     = live ? 'block' : 'none';
