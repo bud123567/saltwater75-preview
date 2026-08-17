@@ -614,11 +614,21 @@ p { margin: 0 0 1rem; }
    pixels off, the sliver that shows is indistinguishable from the card. */
 .ent-cal.is-live { background: #00373d; }
 
+/* The window the live Wix calendar is viewed through: the frame inside is laid
+   out at that layout's full page width, then shifted and scaled so only the
+   calendar is in view. See CAL_VIEW in the script for the numbers. */
+.ent-cal__window { position: relative; width: 100%; overflow: hidden; }
+.ent-cal__live {
+	position: absolute; top: 0; left: 0; border: 0;
+	transform-origin: top left;
+}
+
 /* ---- Month grid ----------------------------------------------------------
-   One grid at every width. Phones get the same seven columns as a desktop —
-   the cells get shorter and the act names shrink, but nothing is dropped and
-   nothing needs sideways scrolling. */
-.ent-cal.is-live { padding: clamp(.75rem, 2.5vw, 1.5rem); }
+   Drawn here rather than framed in, for the screens the live widget can't
+   serve. Same seven columns as the desktop calendar; the cells get shorter
+   and the act names shrink, but nothing is dropped and nothing needs
+   sideways scrolling. */
+.ent-cal.is-grid { padding: clamp(.75rem, 2.5vw, 1.5rem); }
 
 .ent-cal__bar {
 	display: flex; align-items: center; justify-content: space-between;
@@ -826,32 +836,32 @@ p { margin: 0 0 1rem; }
            tools/sync-events.js. -->
       <script type="application/json" id="ent-events">
       [
-      {"date":"2026-07-31","title":"Joey Fitz"},
-      {"date":"2026-08-01","title":"Abrielle Villegas"},
-      {"date":"2026-08-06","title":"Two Pistols"},
-      {"date":"2026-08-07","title":"Relicoustic"},
-      {"date":"2026-08-08","title":"Joey Fitz"},
-      {"date":"2026-08-14","title":"Dylan Canfield"},
-      {"date":"2026-08-15","title":"Endless Ember"},
-      {"date":"2026-08-20","title":"Two Pistols"},
-      {"date":"2026-08-22","title":"Cecilia Grace"},
-      {"date":"2026-08-27","title":"Everett Spells"},
-      {"date":"2026-08-28","title":"On the Edge"},
-      {"date":"2026-08-28","title":"Reagan Kent"},
-      {"date":"2026-08-29","title":"Dylan Canfield"},
-      {"date":"2026-09-03","title":"Everett Spells"},
-      {"date":"2026-09-04","title":"Pistol Whipped"},
-      {"date":"2026-09-04","title":"Rogue Citizens"},
-      {"date":"2026-09-05","title":"Dylan Canfield"},
-      {"date":"2026-09-11","title":"Relicoustic"},
-      {"date":"2026-09-12","title":"Cecilia Grace"},
-      {"date":"2026-09-19","title":"Endless Ember"},
-      {"date":"2026-09-24","title":"Everett Spells"},
-      {"date":"2026-09-25","title":"On the Edge"},
-      {"date":"2026-10-09","title":"On the Edge"},
-      {"date":"2026-10-10","title":"Pistol Whipped"},
-      {"date":"2026-11-13","title":"On the Edge"},
-      {"date":"2026-12-11","title":"On the Edge"}
+      {"date": "2026-07-31", "title": "Joey Fitz"},
+      {"date": "2026-08-01", "title": "Abrielle Villegas"},
+      {"date": "2026-08-06", "title": "Two Pistols"},
+      {"date": "2026-08-07", "title": "Relicoustic"},
+      {"date": "2026-08-08", "title": "Joey Fitz"},
+      {"date": "2026-08-14", "title": "Dylan Canfield"},
+      {"date": "2026-08-15", "title": "Endless Ember"},
+      {"date": "2026-08-20", "title": "Two Pistols"},
+      {"date": "2026-08-22", "title": "Cecilia Grace"},
+      {"date": "2026-08-27", "title": "Everett Spells"},
+      {"date": "2026-08-28", "title": "On the Edge"},
+      {"date": "2026-08-28", "title": "Reagan Kent"},
+      {"date": "2026-08-29", "title": "Dylan Canfield"},
+      {"date": "2026-09-03", "title": "Everett Spells"},
+      {"date": "2026-09-04", "title": "Pistol Whipped"},
+      {"date": "2026-09-04", "title": "Rogue Citizens"},
+      {"date": "2026-09-05", "title": "Dylan Canfield"},
+      {"date": "2026-09-11", "title": "Relicoustic"},
+      {"date": "2026-09-12", "title": "Cecilia Grace"},
+      {"date": "2026-09-19", "title": "Endless Ember"},
+      {"date": "2026-09-24", "title": "Everett Spells"},
+      {"date": "2026-09-25", "title": "On the Edge"},
+      {"date": "2026-10-09", "title": "On the Edge"},
+      {"date": "2026-10-10", "title": "Pistol Whipped"},
+      {"date": "2026-11-13", "title": "On the Edge"},
+      {"date": "2026-12-11", "title": "On the Edge"}
       ]
       </script>
 
@@ -1130,15 +1140,78 @@ p { margin: 0 0 1rem; }
 	}
 
 	/* ---- Entertainment calendar --------------------------------------------
-	   Drawn from ENT_EVENTS in the markup above, so the same seven-column month
-	   grid renders at every width. This replaced an iframe onto the Wix page:
-	   Wix decides desktop-vs-mobile server-side from the User-Agent, which put
-	   the desktop calendar permanently out of a phone's reach. */
+	   Two renderers, because no single one covers both screens.
+
+	   On a desktop the calendar IS the one on the Wix site, live, framed in and
+	   cropped to the calendar's corner of that page — so whatever gets booked
+	   over there shows up here with nothing to keep in step.
+
+	   A phone cannot have that. Wix picks the layout server-side from the
+	   User-Agent, and the mobile one it hands out is a date picker with the act
+	   names stripped out — that is the deviceType=mobile flag doing it, not the
+	   width (the desktop widget squeezed to 320px keeps every name). So phones
+	   get the grid below, drawn from ENT_EVENTS in the markup and refreshed by
+	   tools/sync-events.js.
+
+	   Both are measured in their own layout's pixels:
+	     frame  the width that layout is built for (1000 clears its own minimum)
+	     x, y   top-left corner of the calendar within that page
+	     w, h   its size, straight off the Wix component
+	   If Wix is ever re-laid-out and the crop slips, these are the only numbers
+	   to re-measure. */
+	var CAL_VIEW = {
+		url: 'https://www.saltwater75.com/entertainment-calendar',
+		desktop: { frame: 1000, x: 50, y: 344, w: 900, h: 835 },
+		/* Measured off the live mobile page, not the Wix editor: the component
+		   is 280x366 there. Boxed at 288x377 so the whole calendar clears,
+		   including the detail strip under the grid — the previous 255 cut the
+		   bottom third of it off. */
+		mobile:  { frame:  320, x: 20, y: 309, w: 288, h: 377 },
+		/* Below this the desktop crop would shrink a 900px calendar past
+		   readable, so the drawn grid takes over there. */
+		minWidth: 700
+	};
+
 	var calBox = document.getElementById('ent-cal');
 	var dataEl = document.getElementById('ent-events');
-	if (calBox && dataEl) {
+	if (calBox) {
+		var standby = calBox.querySelector('.ent-cal__fallback');
+
+		/* Same test Wix's own server makes. Getting this wrong would crop the
+		   wrong layout, so it stays deliberately close to what they look for. */
+		var onPhone = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i
+		              .test(navigator.userAgent);
+
 		var events = [];
-		try { events = JSON.parse(dataEl.textContent) || []; } catch (e) {}
+		try { events = JSON.parse((dataEl || {}).textContent || '[]') || []; } catch (e) {}
+
+		/* ---- the live Wix calendar ---- */
+		var win = document.createElement('div');
+		win.className = 'ent-cal__window';
+		win.style.display = 'none';
+
+		/* Which layout arrives is decided by the User-Agent, server-side, so the
+		   crop has to be chosen the same way rather than by measuring the box. */
+		var view = onPhone ? CAL_VIEW.mobile : CAL_VIEW.desktop;
+
+		var frame = document.createElement('iframe');
+		frame.className = 'ent-cal__live';
+		frame.title = 'Saltwater 75 entertainment calendar';
+		frame.setAttribute('scrolling', 'no');   /* keeps the rest of that page out of view */
+		frame.style.width  = view.frame + 'px';
+		/* Past the bottom of the calendar by enough that the Wix chat bubble —
+		   fixed to the bottom of whatever viewport the frame reports — lands
+		   below the cropped window instead of floating over the last week. */
+		frame.style.height = (view.y + view.h + 320) + 'px';
+		win.appendChild(frame);
+		calBox.appendChild(win);
+
+		/* ---- the drawn grid ---- */
+		var grid = document.createElement('div');
+		grid.style.display = 'none';
+		calBox.appendChild(grid);
+
+		var drawGrid = function () { return false; };
 
 		if (events.length) {
 			var MONTHS = ['January','February','March','April','May','June',
@@ -1150,13 +1223,12 @@ p { margin: 0 0 1rem; }
 			events.forEach(function (ev) { (byDate[ev.date] = byDate[ev.date] || []).push(ev); });
 
 			var keys = Object.keys(byDate).sort();
-			var first = keys[0], last = keys[keys.length - 1];
-			var minM = new Date(first + 'T12:00:00');
-			var maxM = new Date(last + 'T12:00:00');
+			var minM = new Date(keys[0] + 'T12:00:00');
+			var maxM = new Date(keys[keys.length - 1] + 'T12:00:00');
 			minM = new Date(minM.getFullYear(), minM.getMonth(), 1);
 			maxM = new Date(maxM.getFullYear(), maxM.getMonth(), 1);
 
-			/* Open on the current month when it has anything on, else the first
+			/* Open on the current month when it has anything on, else the nearest
 			   month that does — so the card is never an empty grid on arrival. */
 			var today = new Date();
 			var todayKey = [today.getFullYear(),
@@ -1166,8 +1238,7 @@ p { margin: 0 0 1rem; }
 			if (cur < minM) cur = new Date(minM);
 			if (cur > maxM) cur = new Date(maxM);
 
-			calBox.className = 'ent-cal is-live';
-			calBox.innerHTML =
+			grid.innerHTML =
 				'<div class="ent-cal__bar">' +
 					'<button class="ent-cal__nav" id="cal-prev" type="button" aria-label="Previous month">&#8249;</button>' +
 					'<h3 class="ent-cal__title" id="cal-title"></h3>' +
@@ -1175,11 +1246,11 @@ p { margin: 0 0 1rem; }
 				'</div><div class="ent-cal__grid" id="cal-grid"></div>' +
 				'<div class="ent-cal__agenda" id="cal-agenda"></div>';
 
-			var titleEl  = document.getElementById('cal-title');
-			var gridEl   = document.getElementById('cal-grid');
-			var agendaEl = document.getElementById('cal-agenda');
-			var prevBtn = document.getElementById('cal-prev');
-			var nextBtn = document.getElementById('cal-next');
+			var titleEl  = grid.querySelector('#cal-title');
+			var gridEl   = grid.querySelector('#cal-grid');
+			var agendaEl = grid.querySelector('#cal-agenda');
+			var prevBtn  = grid.querySelector('#cal-prev');
+			var nextBtn  = grid.querySelector('#cal-next');
 
 			var pad = function (n) { return ('0' + n).slice(-2); };
 			var esc = function (t) {
@@ -1223,14 +1294,14 @@ p { margin: 0 0 1rem; }
 				gridEl.innerHTML = html;
 
 				/* Same month spelled out, for where the cells clip the names. */
-				var days = Object.keys(byDate).filter(function (k) {
+				var days = keys.filter(function (k) {
 					return +k.slice(0, 4) === y && +k.slice(5, 7) === m + 1;
-				}).sort();
+				});
 
 				agendaEl.innerHTML = days.length ? days.map(function (k) {
-					var d = new Date(k + 'T12:00:00');
+					var dd = new Date(k + 'T12:00:00');
 					return '<div class="ent-cal__agenda-row">' +
-					       '<span class="ent-cal__agenda-date">' + DOW[d.getDay()] + ' ' + d.getDate() + '</span>' +
+					       '<span class="ent-cal__agenda-date">' + DOW[dd.getDay()] + ' ' + dd.getDate() + '</span>' +
 					       '<span class="ent-cal__agenda-acts">' +
 					       byDate[k].map(function (ev) { return esc(ev.title); }).join(' &middot; ') +
 					       '</span></div>';
@@ -1249,8 +1320,35 @@ p { margin: 0 0 1rem; }
 			prevBtn.addEventListener('click', step(-1));
 			nextBtn.addEventListener('click', step(1));
 			render();
+			drawGrid = function () { return true; };
 		}
-		/* No events baked in: the standby card in the markup stays as it is. */
+
+		/* Pick a renderer, and re-pick on resize so a rotation or a dragged
+		   window lands on the right one. */
+		var fit = function () {
+			var boxW = calBox.clientWidth;
+			var live = onPhone || boxW >= CAL_VIEW.minWidth;
+			var haveGrid = drawGrid();
+
+			win.style.display     = live ? 'block' : 'none';
+			grid.style.display    = (!live && haveGrid) ? 'block' : 'none';
+			standby.style.display = (live || haveGrid) ? 'none' : '';
+			calBox.className = 'ent-cal' + (live ? ' is-live' : (haveGrid ? ' is-grid' : ''));
+
+			if (!live) return;
+
+			/* Deferred until it is going to be shown, so a phone never pays for
+			   loading the Wix page behind it. */
+			if (!frame.src) frame.src = CAL_VIEW.url;
+
+			var scale = boxW / view.w;
+			frame.style.transform = 'scale(' + scale + ') translate(' +
+			                        (-view.x) + 'px,' + (-view.y) + 'px)';
+			win.style.height = (view.h * scale) + 'px';
+		};
+		fit();
+		window.addEventListener('resize', fit);
+		window.addEventListener('orientationchange', fit);
 	}
 })();
 </script>
