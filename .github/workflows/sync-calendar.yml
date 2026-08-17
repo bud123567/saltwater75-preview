@@ -1,0 +1,38 @@
+name: Sync entertainment calendar
+
+# Keeps the lineup baked into saltwater75-entertainment.html in step with the
+# Boom Calendar on the Wix site. Weekly, plus on demand from the Actions tab.
+on:
+  schedule:
+    - cron: '17 9 * * 1'   # Mondays, 09:17 UTC
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Puppeteer
+        run: npm init -y && npm i puppeteer --no-fund --no-audit
+
+      - name: Read the calendar
+        run: node tools/sync-events.js 10
+
+      - name: Commit any change
+        run: |
+          if [[ -n "$(git status --porcelain saltwater75-entertainment.html)" ]]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add saltwater75-entertainment.html
+            git commit -m "Sync entertainment lineup from Wix calendar"
+            git push
+          else
+            echo "Lineup unchanged."
+          fi
