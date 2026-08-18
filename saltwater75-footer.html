@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#06151a">
+<meta name="theme-color" content="#0b1f26">
 <title>Footer | Saltwater 75</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,9 +30,12 @@ body {
 	margin: 0;
 	font-family: var(--body);
 	color: var(--sand);
-	/* The footer's own colour, not --ink: the module is the footer, so the
-	   widget has to be this shade edge to edge however tall Wix draws it. */
-	background: #06151a;
+	/* --ink, the page's own shade, rather than the near-black #06151a the
+	   footer uses at the bottom of the full pages: standing on its own the
+	   darker one read as a heavy black band. Set on the body as well as the
+	   footer, so the widget stays this colour edge to edge however tall Wix
+	   draws the box. */
+	background: var(--ink);
 	line-height: 1.65;
 	-webkit-font-smoothing: antialiased;
 }
@@ -79,7 +82,7 @@ p { margin: 0 0 1rem; }
 .callpop button:focus-visible { outline: 2px solid var(--sand); outline-offset: 2px; }
 
 /* ---------- Footer ---------- */
-.site-footer { background: #06151a; padding-top: clamp(2.5rem, 5vw, 4rem); }
+.site-footer { background: var(--ink); padding-top: clamp(2.5rem, 5vw, 4rem); }
 .site-footer__inner {
 	display: flex; align-items: center; justify-content: space-between;
 	gap: 1.5rem; flex-wrap: wrap; padding-bottom: 2rem;
@@ -161,6 +164,9 @@ p { margin: 0 0 1rem; }
   A frame cannot grow itself, so the box has to be tall enough for the
   content. Slack is invisible — the widget is the same colour as the footer —
   so err high rather than low.
+
+  The background is --ink (#0b1f26), the same shade the pages sit on, not the
+  #06151a the built-in footer uses. One step up: --ink-2 (#0e2a33).
 
   Still loaded from the internet:
     • Google Fonts  — Playfair Display + Montserrat
