@@ -743,6 +743,27 @@ p { margin: 0 0 1rem; }
 @media (max-width: 560px) {
 	.ent-cal__fallback .btn { width: 100%; max-width: 18.125rem; }
 }
+
+/* ---------- Phone: banner module only ----------------------------------
+   On a phone this file is pasted into Wix as the top-of-page module and
+   nothing more: the utility strip, the header, and the banner that reads
+   "Entertainment / Live music on the bay all summer long". The lineup, the
+   closing CTA and the footer are their own modules over there, so the embed
+   has to stop after the banner rather than repeat them down the page — and
+   it is the sheer length of this one, scrolling on past its own end, that
+   made the module read as an endless nav bar.
+
+   Cut by width, matching the CAL_VIEW.minWidth divider the calendar already
+   switches on, so a desktop — framed at ~980px by Wix, wider still on its
+   own — keeps the whole page exactly as it was. Nothing is deleted: the
+   markup stays for desktop, and the calendar script never loads the Wix
+   frame at this width (a display:none card measures 0 wide, so `fit()`
+   falls through to the drawn grid and leaves frame.src unset). */
+@media (max-width: 700px) {
+	.ent-calendar,
+	.hh-cta,
+	.site-footer { display: none; }
+}
 </style>
 <!--
   ===========================================================================
