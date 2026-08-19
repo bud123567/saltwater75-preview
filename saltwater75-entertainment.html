@@ -4,7 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0b1f26">
-<title>Entertainment | Saltwater 75</title>
+<!-- SEO -->
+<title>Live Music &amp; Entertainment | Saltwater 75 &mdash; Ocean City, MD</title>
+<meta name="description" content="Live music on the bay all summer long at Saltwater 75. See who is playing and when, with set times, on the entertainment calendar.">
+<link rel="canonical" href="https://www.saltwater75.com/entertainment-calendar">
+<link rel="icon" href="https://static.wixstatic.com/media/c57fb0_ff950f6488bf48a5b535d179ea75521a~mv2.png/v1/fit/w_180,h_180,q_90/saltwater75-icon.png" type="image/png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Saltwater 75">
+<meta property="og:title" content="Live Music &amp; Entertainment | Saltwater 75 &mdash; Ocean City, MD">
+<meta property="og:description" content="Live music on the bay all summer long at Saltwater 75. See who is playing and when, with set times, on the entertainment calendar.">
+<meta property="og:url" content="https://www.saltwater75.com/entertainment-calendar">
+<meta property="og:image" content="https://static.wixstatic.com/media/8b7d81_4578ab8a85194bbf8a068a0aa2a69166~mv2.jpg/v1/fill/w_1200,h_630,al_c,q_85/saltwater75-og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The deck at Saltwater 75, looking out over the bay">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /SEO -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1218,6 +1233,70 @@ p { margin: 0 0 1rem; }
 
 		var events = [];
 		try { events = JSON.parse((dataEl || {}).textContent || '[]') || []; } catch (e) {}
+
+		/* ---- Event schema ------------------------------------------------
+		   Emitted from ENT_EVENTS rather than written into the markup, because
+		   that list is rewritten weekly by tools/sync-events.js and a second,
+		   hand-kept copy of the same lineup would be wrong inside a month.
+		   Only what is still to come: a page advertising last month's acts is
+		   worse than one advertising none. */
+		(function () {
+			var pad2 = function (n) { return ('0' + n).slice(-2); };
+			var now = new Date();
+			var todayIso = now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate());
+
+			/* "4:00 pm – 8:00 pm" -> ["16:00", "20:00"]. Anything that does not
+			   parse simply leaves the event as a date, which schema.org allows. */
+			var clock = function (t) {
+				var m = /^(\d{1,2}):(\d{2})\s*(am|pm)$/i.exec((t || '').trim());
+				if (!m) return null;
+				var h = +m[1] % 12;
+				if (/pm/i.test(m[3])) h += 12;
+				return pad2(h) + ':' + m[2];
+			};
+
+			var ld = events
+				.filter(function (ev) { return ev.date >= todayIso; })
+				.slice(0, 50)
+				.map(function (ev) {
+					var span = (ev.time || '').split(/[–—-]/);
+					var from = clock(span[0]), to = clock(span[1]);
+					var e = {
+						'@context': 'https://schema.org',
+						'@type': 'MusicEvent',
+						name: ev.title + ' at Saltwater 75',
+						startDate: from ? ev.date + 'T' + from : ev.date,
+						eventStatus: 'https://schema.org/EventScheduled',
+						eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+						performer: { '@type': 'MusicGroup', name: ev.title },
+						organizer: { '@type': 'Organization', name: 'Saltwater 75',
+						             url: 'https://www.saltwater75.com/' },
+						url: 'https://www.saltwater75.com/entertainment-calendar',
+						location: {
+							'@type': 'Place',
+							name: 'Saltwater 75',
+							address: {
+								'@type': 'PostalAddress',
+								streetAddress: '115 75th Street',
+								addressLocality: 'Ocean City',
+								addressRegion: 'MD',
+								postalCode: '21842',
+								addressCountry: 'US'
+							}
+						}
+					};
+					/* A set running to 11pm ends the same evening; one that would
+					   cross midnight is not something this calendar lists. */
+					if (to) e.endDate = ev.date + 'T' + to;
+					return e;
+				});
+
+			if (!ld.length) return;
+			var tag = document.createElement('script');
+			tag.type = 'application/ld+json';
+			tag.textContent = JSON.stringify(ld);
+			document.head.appendChild(tag);
+		})();
 
 		/* ---- the live Wix calendar ---- */
 		var win = document.createElement('div');

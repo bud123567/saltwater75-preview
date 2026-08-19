@@ -48,6 +48,8 @@ CATALOG = [
  dict(key='tees', title='T-Shirts', file='saltwater75-store-tshirts.html',
       wix=SHOP + '/teeshirts',
       blurb='Every design in the shop, in mens, womens and youth cuts.',
+      desc='Saltwater 75 t-shirts: 20 designs in mens, womens and youth cuts, '
+           'from $18. Ocean City, Maryland.',
       items=[
   ("Nobody Remembers Tee - Short Sleeve","$25.00","nobody-remembers-tee-short-sleeve","8b7d81_369e8aec66a74673bd611d52b85ae684~mv2.jpg"),
   ("Sailing Rectanges","$25.00","sailing-rectanges","8b7d81_d02635931bbc4cb9ac08d44287ca95f2~mv2.jpg"),
@@ -73,6 +75,8 @@ CATALOG = [
  dict(key='tops', title='Long Sleeve + Sweatshirts', file='saltwater75-store-sweatshirts.html',
       wix=SHOP + '/shop-5',
       blurb='For when the wind comes off the bay after dark.',
+      desc='Saltwater 75 hoodies, a pullover and a performance long sleeve, '
+           '$25 to $38, for when the wind comes off the bay.',
       items=[
   ("But Did We Sink Hoodie","$38.00","but-did-we-sink-hoodie","8b7d81_d59765ff7bb04eeeaf5c606559b5304e~mv2.jpg"),
   ("Saltwater 75 Hoodie &mdash; Plans for Sailing","$38.00","saltwater-75-hoodie-plans-for-sailing","8b7d81_301badf670084c90aefb9ff77fa65a06~mv2.png"),
@@ -82,12 +86,16 @@ CATALOG = [
  dict(key='hats', title='Hats', file='saltwater75-store-hats.html',
       wix=SHOP + '/hats',
       blurb='One in the shop right now.',
+      desc='The Saltwater 75 trucker hat, $25, from the shop on 75th Street '
+           'in Ocean City, Maryland.',
       items=[
   ("Saltwater 75 &mdash; Trucker Hat","$25.00","saltwater-75-trucker-hat","8b7d81_aca3f4cd3ce24c8bb1cf617dd72ffc8d~mv2.png"),
       ]),
  dict(key='accessories', title='Accessories', file='saltwater75-store-accessories.html',
       wix=SHOP + '/accessories',
       blurb='Tumblers, bags and bar gear &mdash; the small stuff that ends up on the boat.',
+      desc='Saltwater 75 tumblers, cooler bags, totes, koozies, bottle openers '
+           'and bar gear, from $2.',
       items=[
   ("SW Navy Tumbler","$55.00","sw-navy-tumbler","8b7d81_ed6a3f8dcbc74d71aa6632df8418d88b~mv2.jpg"),
   ("Saltwater 75 Cooler Bag","$40.00","saltwater-75-cooler-bag","8b7d81_a25a219f8b14490bb9c4a6583085d5d7~mv2.png"),
@@ -106,6 +114,8 @@ CATALOG = [
  dict(key='giftcards', title='Gift Cards + AO Game Card', file='saltwater75-store-giftcards.html',
       wix=SHOP + '/giftcards',
       blurb='Saltwater 75, Ropewalk and AlleyOops &mdash; digital or physical.',
+      desc='Gift cards for Saltwater 75, Ropewalk and AlleyOops, plus the '
+           'AlleyOops game card. Digital or physical.',
       items=[
   # The shop lists the digital card at $0.00 because the amount is chosen at
   # checkout. Printing "$0.00" here would read as a bug, so it says so instead.
@@ -117,15 +127,21 @@ CATALOG = [
       ]),
 ]
 
+STORE_DESC = ('The Saltwater 75 shop: tees, hoodies, hats, tumblers, bar gear and gift '
+              'cards for Saltwater 75, Ropewalk and AlleyOops. 43 items, with prices.')
+
 # The top-of-page Wix modules: same bar, same banner photo, different words.
 # The cart one is a copy of the store one — the cart itself is Wix's, and goes
 # in underneath as its own element.
 MODULES = [
  dict(title='Store', file='saltwater75-store-navbar.html', current=True,
       lede='Tees, hoodies, hats and bar gear &mdash; plus gift cards for '
-           'Saltwater 75, Ropewalk and AlleyOops.'),
+           'Saltwater 75, Ropewalk and AlleyOops.',
+      desc='The Saltwater 75 store: tees, hoodies, hats, tumblers, bar gear and '
+           'gift cards, from the bar at 115 75th Street, Ocean City.'),
  dict(title='Cart', file='saltwater75-cart-navbar.html', current=False,
-      lede='Everything you have picked out, ready when you are.'),
+      lede='Everything you have picked out, ready when you are.',
+      desc='Your Saltwater 75 cart.'),
 ]
 
 PHONE_ICON = ('<svg class="icon" viewBox="0 0 512 512" aria-hidden="true" focusable="false">'
@@ -135,6 +151,46 @@ PHONE_ICON = ('<svg class="icon" viewBox="0 0 512 512" aria-hidden="true" focusa
  '18.4-30 11.6-46.3l-40-96z"/></svg>')
 
 MAPS = ('https://www.google.com/maps/search/?api=1&amp;query=115+75th+Street+Ocean+City+MD+21842')
+
+
+# --------------------------------------------------------------------------
+# SEO
+# --------------------------------------------------------------------------
+
+FAVICON = ('https://static.wixstatic.com/media/c57fb0_ff950f6488bf48a5b535d179ea75521a'
+           '~mv2.png/v1/fit/w_180,h_180,q_90/saltwater75-icon.png')
+OG_IMAGE = ('https://static.wixstatic.com/media/8b7d81_4578ab8a85194bbf8a068a0aa2a69166'
+            '~mv2.jpg/v1/fill/w_1200,h_630,al_c,q_85/saltwater75-og.jpg')
+
+
+def seo(title, desc, canonical=None, noindex=False):
+    """The head's SEO block, in the same shape and order the hand-written pages
+       carry it. canonical and noindex are never both set: a page told not to be
+       indexed has no credit left to hand anywhere.
+
+       Worth knowing where this does and does not reach. Pasted into a Wix HTML
+       embed, none of it is the page's SEO — the embed is an iframe with a head
+       of its own, and Wix's own SEO panel owns the page. It counts when one of
+       these URLs is crawled or shared directly, which is what the hosted copies
+       are for."""
+    out = ['<!-- SEO -->', '<title>%s</title>' % title,
+           '<meta name="description" content="%s">' % desc]
+    out.append('<meta name="robots" content="noindex, follow">' if noindex
+               else '<link rel="canonical" href="%s">' % canonical)
+    out += ['<link rel="icon" href="%s" type="image/png">' % FAVICON,
+            '<meta property="og:type" content="website">',
+            '<meta property="og:site_name" content="Saltwater 75">',
+            '<meta property="og:title" content="%s">' % title,
+            '<meta property="og:description" content="%s">' % desc]
+    if canonical:
+        out.append('<meta property="og:url" content="%s">' % canonical)
+    out += ['<meta property="og:image" content="%s">' % OG_IMAGE,
+            '<meta property="og:image:width" content="1200">',
+            '<meta property="og:image:height" content="630">',
+            '<meta property="og:image:alt" content="The deck at Saltwater 75, looking out over the bay">',
+            '<meta name="twitter:card" content="summary_large_image">',
+            '<!-- /SEO -->']
+    return '\n'.join(out)
 
 
 # --------------------------------------------------------------------------
@@ -150,6 +206,9 @@ def shell():
     # everything above the source page's OWN section CSS: tokens, chrome,
     # responsive rules, the subpage banner and the closing CTA
     head = src[:src.index('/* ---------- Contact: the three ways in ---------- */')]
+    a = head.index('<!-- SEO -->')
+    b = head.index('<!-- /SEO -->') + len('<!-- /SEO -->')
+    head = (head[:a], head[b:])          # the contact page's own block drops out
     header = between('<a class="skip-link', '<main id="content"')
     footer = between('<footer id="colophon"', '\n\n<script>')
     script = src[src.index('<script>\n/**'):]
@@ -595,11 +654,10 @@ def file_comment(title, body):
 -->''' % (title, body)
 
 
-def write(path, title_tag, comment, main, page, wix=False, with_footer=True,
+def write(path, seo_block, comment, main, page, wix=False, with_footer=True,
           body_class='', current=True):
-    head, header, footer, script = shell()
-    head = head.replace('<title>Contact | Saltwater 75</title>',
-                        '<title>%s</title>' % title_tag)
+    (head_a, head_b), header, footer, script = shell()
+    head = head_a + seo_block + head_b
     body = '<body class="%s">' % body_class if body_class else '<body>'
     doc = (head + STORE_CSS + '</style>\n' + comment + '\n</head>\n' + body + '\n'
            + wire_nav(header, page, wix, current) + '\n' + main + '\n'
@@ -610,7 +668,9 @@ def write(path, title_tag, comment, main, page, wix=False, with_footer=True,
 
 def main():
     total = len(CATALOG)
-    n = write('saltwater75-store.html', 'Store | Saltwater 75',
+    n = write('saltwater75-store.html',
+              seo('Store | Saltwater 75 &mdash; Ocean City, MD', STORE_DESC,
+                  canonical=SHOP + '/shop'),
               file_comment('STORE (single file)',
   '''  The whole shop on one page: %d products in %d categories, each grouped the
   way the shop groups them. One page per category sits alongside this one —
@@ -621,7 +681,9 @@ def main():
           (n, sum(len(c['items']) for c in CATALOG)))
 
     for c in CATALOG:
-        n = write(c['file'], '%s | Saltwater 75' % c['title'],
+        n = write(c['file'],
+                  seo('%s | Saltwater 75 &mdash; Ocean City, MD' % c['title'],
+                      c['desc'], canonical=c['wix']),
                   file_comment('STORE / %s (single file)' % c['title'].upper(),
   '''  One category out of the shop: %s. The hub at saltwater75-store.html
   carries all %d products across every category.
@@ -630,7 +692,8 @@ def main():
         print('%-34s %6d bytes  %d products' % (c['file'], n, len(c['items'])))
 
     for m in MODULES:
-        n = write(m['file'], '%s | Saltwater 75' % m['title'],
+        n = write(m['file'],
+                  seo('%s | Saltwater 75' % m['title'], m['desc'], noindex=True),
                   MODULE_COMMENT % (m['title'].upper(), m['title']),
                   module_main(m['title'], m['lede']), None,
                   wix=True, with_footer=False, body_class='is-module',
