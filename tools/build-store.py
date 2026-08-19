@@ -453,6 +453,38 @@ STORE_CSS = '''/* ---------- Store: browse strip ---------- */
 	.shop-browse__actions .btn { width: 100%; max-width: 18.125rem; }
 }
 
+/* ---------- The module's bar, a size up -----------------------------------
+   On a full page the bar takes its scale from everything under it. Alone at
+   the top of a Wix page it reads small, so the module runs a size up: logo,
+   links, the reservation button, the burger and the drawer rows. Scoped to
+   .is-module throughout, so the six store pages keep the size the rest of the
+   site uses. */
+.is-module .site-logo img { height: 4.6rem; }
+.is-module .site-header.is-scrolled .site-logo img { height: 3.6rem; }
+.is-module .utility__item { font-size: .86rem; }
+.is-module .utility__item .icon { width: .82rem; height: .82rem; }
+.is-module .site-header__actions .btn--sm.reserve { font-size: .9rem; padding: .7rem 1.35rem; }
+
+/* Between 1025 and 1250 the menu is already tightening to stay on one line
+   beside the logo, so only grow the links where there is room to. */
+@media (min-width: 1251px) {
+	.is-module .main-navigation a { font-size: 1.02rem; padding: .6rem .95rem; }
+}
+
+@media (max-width: 1024px) {
+	.is-module .nav-toggle { width: 3.1rem; height: 2.9rem; }
+	.is-module .nav-toggle__bar { height: 3px; margin: .38rem 0; }
+	/* The X has to travel one bar pitch, and the pitch just changed: 3px bar
+	   plus a .38rem gap is 9, where the stock bar's 2px and .3125rem was 7. */
+	.is-module .nav-open .nav-toggle__bar:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+	.is-module .nav-open .nav-toggle__bar:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+	/* Clears the taller header the bigger logo makes. */
+	.is-module .main-navigation { padding-top: 8.25rem; }
+	.is-module .main-navigation .menu > .menu-item > a { font-size: 1.06rem; padding: .95rem .7rem; }
+	.is-module .main-navigation .sub-menu a { font-size: .98rem; padding: .62rem .8rem; }
+}
+
 /* ---------- The top-of-page module ---------------------------------------
    This banner is the whole module below the header, and on a phone its job is
    as much structural as visual: the drawer is position:fixed, and inside an
@@ -466,12 +498,13 @@ STORE_CSS = '''/* ---------- Store: browse strip ---------- */
 @media (max-width: 700px) {
 	.page-hero--module {
 		/* Sized against the drawer rather than picked for looks. Opened, the
-		   six items and their padding measure ~28rem, and the banner's own
-		   padding is in vw, which collapses to nothing at phone widths — so
-		   without a floor the module ends up shorter than the menu it has to
-		   hold. 30rem clears it. Both are in rem, so the frame-scale
-		   correction shrinks them together and the margin survives. */
-		min-height: 30rem;
+		   six items and their padding measure ~31.8rem at the size the bar
+		   runs above, and the banner's own padding is in vw, which collapses
+		   to nothing at phone widths — so without a floor the module ends up
+		   shorter than the menu it has to hold. Both are in rem, so the
+		   frame-scale correction shrinks them together and the margin holds.
+		   Re-measure this if the drawer rows ever change size again. */
+		min-height: 34rem;
 		display: grid; align-content: center;
 		padding-block: clamp(7.5rem, 15vw, 9rem) clamp(2.5rem, 6vw, 3.5rem);
 	}
@@ -503,9 +536,9 @@ MODULE_COMMENT = """<!--
   300px-tall widget gives a 300px-tall drawer with six items scrolling in a
   strip. The banner below the bar is what buys that room.
 
-  The module measures 513px at both 500px and 1280px wide, so:
-    • phone   — 540px
-    • desktop — 540px
+  The module measures 563px at both 500px and 1280px wide, so:
+    • phone   — 590px
+    • desktop — 590px
   If the open menu still scrolls inside the widget, raise the phone one; it
   can never be too tall, since the banner is the same colour underneath.
 
@@ -546,11 +579,13 @@ def file_comment(title, body):
 -->''' % (title, body)
 
 
-def write(path, title_tag, comment, main, page, wix=False, with_footer=True):
+def write(path, title_tag, comment, main, page, wix=False, with_footer=True,
+          body_class=''):
     head, header, footer, script = shell()
     head = head.replace('<title>Contact | Saltwater 75</title>',
                         '<title>%s</title>' % title_tag)
-    doc = (head + STORE_CSS + '</style>\n' + comment + '\n</head>\n<body>\n'
+    body = '<body class="%s">' % body_class if body_class else '<body>'
+    doc = (head + STORE_CSS + '</style>\n' + comment + '\n</head>\n' + body + '\n'
            + wire_nav(header, page, wix) + '\n' + main + '\n'
            + (footer + '\n\n' if with_footer else '') + script)
     open(os.path.join(ROOT, path), 'w').write(doc)
@@ -579,7 +614,8 @@ def main():
         print('%-34s %6d bytes  %d products' % (c['file'], n, len(c['items'])))
 
     n = write('saltwater75-store-navbar.html', 'Store | Saltwater 75',
-              MODULE_COMMENT, module_main(), None, wix=True, with_footer=False)
+              MODULE_COMMENT, module_main(), None, wix=True, with_footer=False,
+              body_class='is-module')
     print('%-34s %6d bytes  nav + banner, no footer' %
           ('saltwater75-store-navbar.html', n))
 
