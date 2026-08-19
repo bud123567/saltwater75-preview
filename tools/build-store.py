@@ -12,6 +12,7 @@ Writes six files, all generated, none meant to be hand-edited:
     saltwater75-store-hats.html
     saltwater75-store-accessories.html
     saltwater75-store-giftcards.html
+    saltwater75-store-navbar.html       the top-of-page Wix module: nav + banner
 
 CATALOG below is the only place the products live, so the hub and the five
 category pages cannot drift apart. It is a snapshot of the Wix shop, read on
@@ -153,10 +154,15 @@ def shell():
     return head, header, footer, script
 
 
-def nav_for(page):
+def nav_for(page, wix=False):
     """Point the Store menu at this family rather than back out to Wix. `page`
-       is a catalog entry, or None for the hub."""
+       is a catalog entry, or None for the hub. `wix` is for the embedded
+       module, where a relative filename would not resolve: there the menu goes
+       to the real category pages on saltwater75.com instead."""
     def item(cat):
+        if wix:
+            return ('<a href="%s" target="_blank" rel="noopener">%s</a>'
+                    % (cat['wix'], cat['title']))
         if page is not None and cat['key'] == page['key']:
             return '<a href="#top" aria-current="page">%s</a>' % cat['title']
         # The hub holds every category, so there its menu jumps down the page;
@@ -164,7 +170,8 @@ def nav_for(page):
         href = '#' + cat['key'] if page is None else cat['file']
         return '<a href="%s">%s</a>' % (href, cat['title'])
 
-    store_link = ('<a href="#top" aria-current="page">Store</a>' if page is None
+    store_link = ('<a href="#top" aria-current="page">Store</a>'
+                  if page is None or wix
                   else '<a href="saltwater75-store.html">Store</a>')
     subs = '\n'.join('            <li class="menu-item">%s</li>' % item(c) for c in CATALOG)
     return ('<li class="menu-item menu-item-has-children">%s\n'
@@ -173,14 +180,14 @@ def nav_for(page):
             '          </ul>\n        </li>' % (store_link, subs, FULL_CATALOG))
 
 
-def wire_nav(header, page):
+def wire_nav(header, page, wix=False):
     """Swap the source page's whole Store menu for this page's version."""
     start = header.index('<li class="menu-item menu-item-has-children"><a href="%s/shop"' % SHOP)
     end = header.index('</li>', header.index('Full Catalog', start)) + len('</li>')
     # ...and one more, which closes the Store item itself. A third would take
     # the Entertainment link that follows it with it.
     end = header.index('</li>', end) + len('</li>')
-    return header[:start] + nav_for(page) + header[end:]
+    return header[:start] + nav_for(page, wix) + header[end:]
 
 
 # --------------------------------------------------------------------------
@@ -346,6 +353,21 @@ def cat_main(page):
        grid(page['items']), closing_cta())
 
 
+def module_main():
+    """The top-of-page module: the chrome and the banner, and nothing else."""
+    return '''<main id="content" class="site-content">
+
+  <section id="top" class="page-hero page-hero--module" style="--hero-img:url(\'https://static.wixstatic.com/media/%s\');">
+    <div class="wrap page-hero__inner">
+      <h1 class="ent-title">Store</h1>
+      <p class="ent-lede">Tees, hoodies, hats and bar gear &mdash; plus gift cards for Saltwater 75, Ropewalk and AlleyOops.</p>
+    </div>
+  </section>
+
+</main>
+''' % HUB_PHOTO
+
+
 STORE_CSS = '''/* ---------- Store: browse strip ---------- */
 .shop-browse { background: var(--ink-2); padding-block: clamp(2.5rem, 5vw, 3.5rem); text-align: center; }
 .shop-nav { display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center; }
@@ -430,7 +452,68 @@ STORE_CSS = '''/* ---------- Store: browse strip ---------- */
 	.product__name { font-size: .92rem; }
 	.shop-browse__actions .btn { width: 100%; max-width: 18.125rem; }
 }
+
+/* ---------- The top-of-page module ---------------------------------------
+   This banner is the whole module below the header, and on a phone its job is
+   as much structural as visual: the drawer is position:fixed, and inside an
+   embed that resolves against the WIDGET box rather than the phone screen. A
+   short widget therefore gives a short menu, with the six items scrolling
+   inside a strip. Standing the banner up to a real height means a widget sized
+   to this module has the room for the menu to open down into.
+
+   Desktop is left alone — the menu is a row up in the bar, needing no height
+   underneath it at all. */
+@media (max-width: 700px) {
+	.page-hero--module {
+		/* Sized against the drawer rather than picked for looks. Opened, the
+		   six items and their padding measure ~28rem, and the banner's own
+		   padding is in vw, which collapses to nothing at phone widths — so
+		   without a floor the module ends up shorter than the menu it has to
+		   hold. 30rem clears it. Both are in rem, so the frame-scale
+		   correction shrinks them together and the margin survives. */
+		min-height: 30rem;
+		display: grid; align-content: center;
+		padding-block: clamp(7.5rem, 15vw, 9rem) clamp(2.5rem, 6vw, 3.5rem);
+	}
+}
 '''
+
+
+MODULE_COMMENT = """<!--
+  ===========================================================================
+  SALTWATER 75 — STORE / TOP-OF-PAGE MODULE (single file)
+  ===========================================================================
+  GENERATED by tools/build-store.py — an edit made here is lost the next time
+  that runs.
+
+  The contact strip, the header, the nav and the Store banner, and then it
+  stops. Meant to be pasted into a Wix HTML embed at the TOP of the store
+  page, with the products going in underneath as their own module — either
+  Wix's own store gallery or saltwater75-store.html.
+
+  There is no footer here: saltwater75-footer.html is that, as its own
+  module at the bottom of the page.
+
+  Every link goes to saltwater75.com rather than to a file beside this one,
+  because inside a Wix embed a relative filename does not resolve.
+
+  Give the widget its height in Wix — a frame cannot grow itself, and here
+  the height is doing real work. The mobile menu is position:fixed, which
+  inside an embed resolves against the WIDGET box, not the phone screen: a
+  300px-tall widget gives a 300px-tall drawer with six items scrolling in a
+  strip. The banner below the bar is what buys that room.
+
+  The module measures 513px at both 500px and 1280px wide, so:
+    • phone   — 540px
+    • desktop — 540px
+  If the open menu still scrolls inside the widget, raise the phone one; it
+  can never be too tall, since the banner is the same colour underneath.
+
+  Still loaded from the internet:
+    • Google Fonts  — Playfair Display + Montserrat
+    • Photo         — hot-linked from static.wixstatic.com
+  ===========================================================================
+-->"""
 
 
 def file_comment(title, body):
@@ -463,12 +546,13 @@ def file_comment(title, body):
 -->''' % (title, body)
 
 
-def write(path, title_tag, comment, main, page):
+def write(path, title_tag, comment, main, page, wix=False, with_footer=True):
     head, header, footer, script = shell()
     head = head.replace('<title>Contact | Saltwater 75</title>',
                         '<title>%s</title>' % title_tag)
     doc = (head + STORE_CSS + '</style>\n' + comment + '\n</head>\n<body>\n'
-           + wire_nav(header, page) + '\n' + main + '\n' + footer + '\n\n' + script)
+           + wire_nav(header, page, wix) + '\n' + main + '\n'
+           + (footer + '\n\n' if with_footer else '') + script)
     open(os.path.join(ROOT, path), 'w').write(doc)
     return len(doc)
 
@@ -493,6 +577,11 @@ def main():
 ''' % (c['title'], sum(len(x['items']) for x in CATALOG))),
                   cat_main(c), c)
         print('%-34s %6d bytes  %d products' % (c['file'], n, len(c['items'])))
+
+    n = write('saltwater75-store-navbar.html', 'Store | Saltwater 75',
+              MODULE_COMMENT, module_main(), None, wix=True, with_footer=False)
+    print('%-34s %6d bytes  nav + banner, no footer' %
+          ('saltwater75-store-navbar.html', n))
 
 
 if __name__ == '__main__':
