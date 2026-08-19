@@ -104,11 +104,6 @@ function saltwater75_store() {
 				'url'   => $base . '/giftcards',
 				'desc'  => 'Saltwater 75, Ropewalk and AlleyOops cards.',
 			),
-			array(
-				'label' => 'Full Catalog',
-				'url'   => $base . '/shop-2',
-				'desc'  => 'Everything in the shop, in one place.',
-			),
 		),
 	);
 }

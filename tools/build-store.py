@@ -251,17 +251,16 @@ def nav_for(page, wix=False, current=True):
     subs = '\n'.join('            <li class="menu-item">%s</li>' % item(c) for c in CATALOG)
     return ('<li class="menu-item menu-item-has-children">%s\n'
             '          <ul class="sub-menu">\n%s\n'
-            '            <li class="menu-item"><a href="%s" target="_blank" rel="noopener">Full Catalog</a></li>\n'
-            '          </ul>\n        </li>' % (store_link, subs, FULL_CATALOG))
+            '          </ul>\n        </li>' % (store_link, subs))
 
 
 def wire_nav(header, page, wix=False, current=True):
     """Swap the source page's whole Store menu for this page's version."""
     start = header.index('<li class="menu-item menu-item-has-children"><a href="%s/shop"' % SHOP)
-    end = header.index('</li>', header.index('Full Catalog', start)) + len('</li>')
-    # ...and one more, which closes the Store item itself. A third would take
-    # the Entertainment link that follows it with it.
-    end = header.index('</li>', end) + len('</li>')
+    # End at the </li> that closes the Store item, found from its submenu's
+    # </ul> rather than from any one entry inside it — the last entry has been
+    # removed once already, and the landmark went with it.
+    end = header.index('</li>', header.index('</ul>', start)) + len('</li>')
     return header[:start] + nav_for(page, wix, current) + header[end:]
 
 
