@@ -20,6 +20,69 @@
 <meta property="og:image:alt" content="The deck at Saltwater 75, looking out over the bay">
 <meta name="twitter:card" content="summary_large_image">
 <!-- /SEO -->
+<!-- Frame fit -->
+<script>
+/* Runs in the head, before the first layout, and that placement is the whole
+   point of it.
+
+   Inside an iframe a viewport unit measures the FRAME, not the screen. The
+   hero below is min-height:100svh, so until .is-framed lands it is as tall as
+   whatever box the host gave us — in a Wix embed that turned a 5,200px page
+   into a 13,800px one, and anything measuring the document in that window
+   (Wix sizing the widget, or a person reading the height off the editor) kept
+   the inflated number. The page then settled to its real height and the
+   difference showed as a blank band under the footer. Worse, it feeds back:
+   a taller widget makes a taller hero makes a taller document.
+
+   Running this at the end of the body, where it used to live, fixed the
+   numbers a beat too late. Here, .is-framed is on <html> before a single box
+   is laid out, so 100svh never resolves against the frame at all. */
+(function () {
+	var de = document.documentElement, framed;
+	try {
+		framed = window.self !== window.top;
+	} catch (e) {
+		framed = true;   /* cross-origin access threw, which itself means framed */
+	}
+	if (!framed) return;
+	de.classList.add('is-framed');
+
+	/* A frame lays out at the WIDGET's width, not the device's, and the host
+	   then paints that frame at whatever size it likes. Wix's mobile view is
+	   the case that bites: it lays an embed out on a narrow grid and stretches
+	   the result across the whole phone screen, magnifying every rem in the
+	   file. A <meta viewport> cannot fix it — that tag is ignored in an iframe.
+
+	   The magnification is knowable: screen.width is the real device width and
+	   stays readable from inside a frame, so the factor is device width ÷ our
+	   layout width. Shrinking the root font size by exactly that cancels it. */
+	function fit() {
+		var layoutW = de.clientWidth;
+		var deviceW = (window.screen && window.screen.width) || 0;
+		var scale   = 1;
+
+		/* Phones only. A desktop Wix page hands its embed a roughly 980px frame
+		   and draws it at life size inside a much wider screen — no
+		   magnification, so the same ratio there would shrink a perfectly good
+		   desktop layout by a third. */
+		if (layoutW && deviceW && deviceW <= 820 && layoutW < deviceW) {
+			scale = Math.max(0.7, layoutW / deviceW);   /* a bad reading must never shrink it to nothing */
+		}
+		de.style.fontSize = (16 * scale) + 'px';
+
+		/* The hero's stand-in for "one viewport tall", built from the real
+		   screen rather than the frame, and in our own pre-magnification units. */
+		var screenH = (window.screen && window.screen.availHeight) || 900;
+		de.style.setProperty('--framed-hero-h',
+			Math.max(420, Math.min((screenH - 130) * scale, 950)) + 'px');
+	}
+
+	fit();
+	/* Rotating the phone changes both readings. */
+	window.addEventListener('resize', fit);
+	window.addEventListener('orientationchange', fit);
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -977,59 +1040,40 @@ p { margin: 0 0 1rem; }
 (function () {
 	'use strict';
 
-	// Running inside an iframe (e.g. pasted into a Wix HTML embed) changes what
-	// viewport units mean — see the .is-framed rules in style.css.
-	var framed;
-	try {
-		framed = window.self !== window.top;
-	} catch (e) {
-		framed = true;   // cross-origin access threw, which itself means framed
-	}
-	/* A frame lays out at the WIDGET's width, not the device's, and the host
-	   then paints that frame at whatever size it likes. Wix's mobile view is
-	   the case that bites: it lays an embed out on a narrow grid and stretches
-	   the result across the whole phone screen. That magnifies every rem and
-	   every pixel in this file, and the design comes out looking blown up even
-	   though its proportions are right. A <meta viewport> cannot fix it — that
-	   tag is ignored inside an iframe.
+	/* The frame fit — .is-framed, the root font size and --framed-hero-h — runs
+	   in an inline script in the head, before the first layout. It cannot live
+	   down here: by this point the page has already been laid out once with
+	   100svh measuring the frame. See the comment up there. */
+	var framed = document.documentElement.classList.contains('is-framed');
 
-	   The magnification is knowable, though. screen.width is the real device
-	   width and stays readable from inside a frame, so the factor is simply
-	   device width ÷ our layout width. Shrinking the root font size by exactly
-	   that factor cancels it out, and since the chrome above is sized in rem,
-	   the whole design lands back at its intended size. */
-	function syncFrameScale() {
-		var layoutW = document.documentElement.clientWidth;
-		var deviceW = (window.screen && window.screen.width) || 0;
-		var scale   = 1;
-
-		/* Only phones get the correction. A desktop Wix page hands its embed a
-		   roughly 980px frame and draws it at life size inside a much wider
-		   screen — no magnification, so the same ratio there would shrink a
-		   perfectly good desktop layout by a third. The stretch only happens
-		   where the host lays the page out narrower than the screen it is
-		   painting onto, which is the phone case. */
-		if (layoutW && deviceW && deviceW <= 820 && layoutW < deviceW) {
-			// Clamped: a bad reading must never shrink the page to nothing.
-			scale = Math.max(0.7, layoutW / deviceW);
-		}
-		document.documentElement.style.fontSize = (16 * scale) + 'px';
-
-		// 100svh would resolve to the frame's height, so approximate a real
-		// viewport from the device screen — that IS readable from inside a
-		// frame. It has to be expressed in our own (pre-magnification) units,
-		// hence the same scale, or the hero comes out a screen and a half tall.
-		var screenH = (window.screen && window.screen.availHeight) || 900;
-		var heroH   = Math.max(420, Math.min((screenH - 130) * scale, 950));
-		document.documentElement.style.setProperty('--framed-hero-h', heroH + 'px');
-	}
-
+	/* ---- Tell the host how tall this document is ---------------------------
+	   An iframe cannot resize itself; the host sets its height. Wix reads a
+	   number for the widget, and a number read too early is a widget the
+	   finished page never grows into — the blank band under the footer. So the
+	   settled height gets posted out, on load and on any later change, for
+	   Velo's onMessage to pick up. Where nothing is listening it costs a
+	   postMessage and nothing else. It is also logged once, so the right
+	   number can simply be read off the console and typed into Wix. */
 	if (framed) {
-		document.documentElement.classList.add('is-framed');
-		syncFrameScale();
-		// Rotating the phone changes both readings.
-		window.addEventListener('resize', syncFrameScale);
-		window.addEventListener('orientationchange', syncFrameScale);
+		var lastHeight = 0;
+		var tellHost = function () {
+			var h = Math.ceil(document.body.getBoundingClientRect().height);
+			if (!h || Math.abs(h - lastHeight) < 2) return;
+			lastHeight = h;
+			try {
+				parent.postMessage({ type: 'sw75:height', height: h,
+				                     page: location.pathname.split('/').pop() }, '*');
+			} catch (e) {}
+		};
+		window.addEventListener('load', function () {
+			tellHost();
+			try { console.info('[Saltwater 75] content height: ' + lastHeight + 'px'); } catch (e) {}
+		});
+		window.addEventListener('resize', tellHost);
+		/* Photos and web fonts land late and change the answer. */
+		if (window.ResizeObserver) new ResizeObserver(tellHost).observe(document.body);
+		if (document.fonts && document.fonts.ready) document.fonts.ready.then(tellHost);
+		tellHost();
 	}
 
 	var header = document.querySelector('.site-header[data-sticky]');
